@@ -6,11 +6,16 @@ const bodyParser = require('body-parser')
 require('dotenv/config')
 app.use(bodyParser())
 const { productModel } = require('./models')
+const cors = require('cors')
 
-const mongoDB = process.env.BARDEMU_DB
+// const mongoDB = process.env.BARDEMU_DB
 mongoose.connect('mongodb+srv://bardemu-app:maciel051@bardemu.fjffdzx.mongodb.net/bardemu?retryWrites=true&w=majority', 
 { useNewUrlParser: true, useUnifiedTopology: true })
 const db = mongoose.connection
+
+app.use(cors({
+  origin: '*'
+}));
 
 db.on('error', console.error.bind(console, 'MongoDB connection error'))
 
