@@ -1,1 +1,2 @@
 # bardemu-backend
+npm start
