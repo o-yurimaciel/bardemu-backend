@@ -4,7 +4,7 @@ const port = process.env.PORT || 5050
 
 app.get('/', (req, res) => {
   res.json({
-    ok: true
+    message: "Olá, BarDeMu!"
   })
 })
 
