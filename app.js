@@ -8,7 +8,8 @@ app.use(bodyParser())
 const { productModel } = require('./models')
 
 const mongoDB = process.env.BARDEMU_DB
-mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb+srv://bardemu-app:maciel051@bardemu.fjffdzx.mongodb.net/bardemu?retryWrites=true&w=majority', 
+{ useNewUrlParser: true, useUnifiedTopology: true })
 const db = mongoose.connection
 
 db.on('error', console.error.bind(console, 'MongoDB connection error'))
