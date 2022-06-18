@@ -40,12 +40,6 @@ app.post('/product', (req, res) => {
   })
 })
 
-app.get('/products', (req, res) => {
-  res.json(
-    products
-  )
-})
-
 app.listen(port, () => {
   console.log('listening on ', port)
 })
