@@ -31,7 +31,7 @@ app.get('/product', async (req, res) => {
   if(req.query && req.query._id) {
     const id = new ObjectId(req.query._id)
     console.log(id)
-    products = await productModel.find({ _id: id})
+    products = await productModel.findById(id)
     console.log('ue', products)
   } else {
     products = await productModel.find()
