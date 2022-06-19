@@ -6,7 +6,7 @@ const ObjectId = require('mongoose').Types.ObjectId;
 const bodyParser = require('body-parser')
 require('dotenv/config')
 app.use(bodyParser())
-const { productModel } = require('./models')
+const { productModel, categoryModel } = require('./models')
 const cors = require('cors')
 
 // const mongoDB = process.env.BARDEMU_DB
@@ -42,6 +42,19 @@ app.get('/product', async (req, res) => {
   })
 })
 
+app.get('/category', async (req, res) => {
+  let categories;
+
+  if(req.query && req.query._id) {
+    const id = new ObjectId(req.query._id)
+    categories = await categoryModel.findById(id)
+  } else {
+    categories = await categoryModel.find()
+  }
+
+  res.status(200).json(categories)
+})
+
 app.post('/product', (req, res) => {
   console.log(req.body)
   const product = {
@@ -60,6 +73,27 @@ app.post('/product', (req, res) => {
   })
 })
 
+app.post('/category', (req, res) => {
+  const category = {
+    _id: new mongoose.Types.ObjectId(),
+    name: req.body.name,
+  }
+
+  let newCategory = new categoryModel(category)
+
+  newCategory.save(function(err) {
+    console.log(err)
+    res.status(200).json(category)
+  })
+})
+
+app.delete('/category', async (req, res) => {
+  console.log(req.body)
+  const id = new ObjectId(req.body._id)
+  await categoryModel.deleteOne({ _id: id })
+  res.status(200).json({})
+})
+
 app.delete('/product', async (req, res) => {
   console.log(req.body)
   const id = new ObjectId(req.body._id)
@@ -72,6 +106,17 @@ app.put('/product', async (req, res) => {
   const id = new ObjectId(req.query._id)
 
   await productModel.findOneAndReplace({
+    _id: id
+  }, req.body)
+
+  res.status(200).json(req.body)
+})
+
+app.put('/category', async (req, res) => {
+  console.log(req.body)
+  const id = new ObjectId(req.query._id)
+
+  await categoryModel.findOneAndReplace({
     _id: id
   }, req.body)
 
