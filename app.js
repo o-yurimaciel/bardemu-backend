@@ -47,7 +47,9 @@ app.post('/product', (req, res) => {
   const product = {
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
-    price: req.body.price
+    description: req.body.description ? req.body.description : '',
+    price: req.body.price ? req.body.price : 0,
+    image: req.body.image ? req.body.image : null
   }
 
   let newProduct = new productModel(product)
