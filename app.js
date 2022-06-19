@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const port = process.env.PORT || 5050
 const mongoose = require('mongoose')
+const ObjectId = require('mongoose').Types.ObjectId; 
 const bodyParser = require('body-parser')
 require('dotenv/config')
 app.use(bodyParser())
@@ -24,7 +25,18 @@ app.get('/', (req, res) => {
 })
 
 app.get('/product', async (req, res) => {
-  const products = await productModel.find()
+  console.log('/product', req.query)
+  let products;
+
+  if(req.query && req.query._id) {
+    const id = new ObjectId(req.query._id)
+    console.log(id)
+    products = await productModel.find({ _id: id})
+    console.log('ue', products)
+  } else {
+    products = await productModel.find()
+  }
+
   res.status(200).json({
     products
   })
@@ -44,6 +56,13 @@ app.post('/product', (req, res) => {
 
     res.status(200).json(product)
   })
+})
+
+app.delete('/product', async (req, res) => {
+  console.log(req.body)
+  const id = new ObjectId(req.body._id)
+  await productModel.deleteOne({ _id: id })
+  res.status(200).json({})
 })
 
 app.listen(port, () => {
