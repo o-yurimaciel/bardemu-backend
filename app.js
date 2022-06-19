@@ -45,6 +45,7 @@ app.get('/product', async (req, res) => {
 app.post('/product', (req, res) => {
   console.log(req.body)
   const product = {
+    _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
     price: req.body.price
   }
@@ -52,8 +53,7 @@ app.post('/product', (req, res) => {
   let newProduct = new productModel(product)
 
   newProduct.save(function(err) {
-    if(err) return handleError(err)
-
+    console.log(err)
     res.status(200).json(product)
   })
 })
