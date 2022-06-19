@@ -67,6 +67,17 @@ app.delete('/product', async (req, res) => {
   res.status(200).json({})
 })
 
+app.put('/product', async (req, res) => {
+  console.log(req.body)
+  const id = new ObjectId(req.query._id)
+
+  await productModel.findOneAndReplace({
+    _id: id
+  }, req.body)
+
+  res.status(200).json(req.body)
+})
+
 app.listen(port, () => {
   console.log('listening on ', port)
 })
