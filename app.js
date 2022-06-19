@@ -77,6 +77,7 @@ app.post('/category', (req, res) => {
   const category = {
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
+    order: req.body.order ? req.body.order : 1
   }
 
   let newCategory = new categoryModel(category)

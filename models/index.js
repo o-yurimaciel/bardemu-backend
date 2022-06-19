@@ -13,6 +13,7 @@ const productModel = mongoose.model('product', new mongoose.Schema({
 const categoryModel = mongoose.model('category', new mongoose.Schema({
   _id: mongoose.Types.ObjectId,
   name: String,
+  order: Number
 }, {
   collection: 'categories'
 }))
