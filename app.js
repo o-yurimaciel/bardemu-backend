@@ -62,7 +62,8 @@ app.post('/product', (req, res) => {
     name: req.body.name,
     description: req.body.description ? req.body.description : '',
     price: req.body.price ? req.body.price : 0,
-    image: req.body.image ? req.body.image : null
+    image: req.body.image ? req.body.image : null,
+    category: req.body.category
   }
 
   let newProduct = new productModel(product)
