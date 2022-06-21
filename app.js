@@ -37,9 +37,7 @@ app.get('/product', async (req, res) => {
     products = await productModel.find()
   }
 
-  res.status(200).json({
-    products
-  })
+  res.status(200).json(products)
 })
 
 app.get('/category', async (req, res) => {
