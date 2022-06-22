@@ -8,6 +8,7 @@ app.use(bodyParser())
 const cors = require('cors')
 const productRouter = require('./routes/product')
 const categoryRouter = require('./routes/category')
+const loginRouter = require('./routes/login')
 
 // const mongoDB = process.env.BARDEMU_DB
 mongoose.connect('mongodb+srv://bardemu-app:maciel051@bardemu.fjffdzx.mongodb.net/bardemu?retryWrites=true&w=majority', 
@@ -20,6 +21,7 @@ app.use(cors({
 
 app.use(productRouter)
 app.use(categoryRouter)
+app.use(loginRouter)
 
 db.on('error', console.error.bind(console, 'MongoDB connection error'))
 

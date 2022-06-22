@@ -19,7 +19,15 @@ const categoryModel = mongoose.model('category', new mongoose.Schema({
   collection: 'categories'
 }))
 
+const loginModel = mongoose.model('login', new mongoose.Schema({
+  login: String,
+  password: String
+}, {
+  collection: 'login'
+}))
+
 module.exports = {
   productModel,
-  categoryModel
+  categoryModel,
+  loginModel
 }
