@@ -1,7 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const { productModel } = require('../models')
-const ObjectId = require('mongoose').Types.ObjectId; 
+const { productModel, categoryModel } = require('../models')
+const ObjectId = require('mongoose').Types.ObjectId;
+const mongoose = require('mongoose')
 
 router.get('/product', async (req, res) => {
   let products;
@@ -32,15 +33,25 @@ router.post('/product', (req, res) => {
     category: req.body.category
   }
 
-  if(product.name && product.description && product.price && product.category) {
+  if(product.name && product.price && product.category) {
     let newProduct = new productModel(product)
-  
-    newProduct.save(function(err) {
-      if(err) {
-        res.status(500).json(err)
-      }
-      res.status(200).json(product)
+
+    const category = categoryModel.findOne({
+      name: product.category
     })
+
+    if(category) {
+      newProduct.save(function(err) {
+        if(err) {
+          res.status(500).json(err)
+        }
+        res.status(200).json(product)
+      })
+    } else {
+      res.status(404).json({
+        message: 'Category not found'
+      })
+    }
   } else {
     res.status(400).json({
       message: 'Validation failure'

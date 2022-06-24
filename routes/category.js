@@ -38,8 +38,7 @@ router.post('/category', (req, res) => {
     })
   } else {
     res.status(400).json({
-      message: 'Validation failure',
-      body: req.body
+      message: 'Validation failure'
     })
   }
 })
@@ -77,8 +76,7 @@ router.put('/category', async (req, res) => {
     }
   } else {
     res.status(400).json({
-      message: 'Validation failure',
-      body: req.body
+      message: 'Validation failure'
     })
   }
 })
