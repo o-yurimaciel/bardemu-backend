@@ -13,7 +13,13 @@ router.get('/product', async (req, res) => {
     products = await productModel.find()
   }
 
-  res.status(200).json(products)
+  if(products) {
+    res.status(200).json(products)
+  } else {
+    res.status(404).json({
+      message: 'Not Found'
+    })
+  }
 })
 
 router.post('/product', (req, res) => {
@@ -26,28 +32,61 @@ router.post('/product', (req, res) => {
     category: req.body.category
   }
 
-  let newProduct = new productModel(product)
-
-  newProduct.save(function(err) {
-    console.log(err)
-    res.status(200).json(product)
-  })
+  if(product.name && product.description && product.price && product.category) {
+    let newProduct = new productModel(product)
+  
+    newProduct.save(function(err) {
+      if(err) {
+        res.status(500).json(err)
+      }
+      res.status(200).json(product)
+    })
+  } else {
+    res.status(400).json({
+      message: 'Validation failure'
+    })
+  }
 })
 
 router.delete('/product', async (req, res) => {
   const id = new ObjectId(req.body._id)
-  await productModel.deleteOne({ _id: id })
-  res.status(200).json({})
+
+  if(id) {
+    const result = await productModel.deleteOne({ _id: id })
+    if(result) {
+      res.status(200).json({})
+    } else {
+      res.status(404).json({
+        message: 'Not Found'
+      })
+    }
+  } else {
+    res.status(400).json({
+      message: 'Validation failure'
+    })
+  }
 })
 
 router.put('/product', async (req, res) => {
   const id = new ObjectId(req.query._id)
 
-  await productModel.findOneAndReplace({
-    _id: id
-  }, req.body)
+  if(id) {
+    const result = await productModel.findOneAndReplace({
+      _id: id
+    }, req.body)
 
-  res.status(200).json(req.body)
+    if(result) {
+      res.status(200).json(req.body)
+    } else {
+      res.status(404).json({
+        message: 'Not Found'
+      })
+    }
+  } else {
+    res.status(400).json({
+      message: 'Validation failure'
+    })
+  }
 })
 
 module.exports = router

@@ -7,7 +7,7 @@ router.post('/login', async (req, res) => {
 
   if(!login || !password) {
     res.status(400).json({
-      message: 'Invalid body'
+      message: 'Validation failure'
     })
   }
 
