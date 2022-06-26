@@ -39,6 +39,8 @@ const orderModel = mongoose.model('order', new mongoose.Schema({
   cashChange: Number,
   cardFlag: String,
   products: { type: Array, required: true },
+  estimatedTime: { type: String },
+  orderStatusHistory: Array
 }, {
   collection: 'order'
 }))

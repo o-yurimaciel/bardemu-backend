@@ -49,9 +49,11 @@ router.post('/order', (req, res) => {
     products
   } = req.body
 
+  const orderStatus = "PENDING"
+
   const newOrder = new orderModel({
     _id: new mongoose.Types.ObjectId(),
-    orderStatus: "PENDING",
+    orderStatus,
     totalValue,
     products,
     clientName,
@@ -61,7 +63,13 @@ router.post('/order', (req, res) => {
     clientAddressNumber,
     paymentType,
     cashChange,
-    cardFlag
+    cardFlag,
+    orderStatusHistory: [
+      {
+        status: orderStatus,
+        date: new Date().toISOString()
+      }
+    ]
   })
 
   newOrder.save(function(err) {
@@ -70,6 +78,34 @@ router.post('/order', (req, res) => {
     }
     res.status(200).json(newOrder)
   })
+})
+
+router.put('/order', async (req, res) => {
+  const { _id } = req.query
+  const { orderStatus, estimatedTime } = req.body
+
+  const result = await orderModel.findOneAndUpdate({
+    _id: new ObjectId(_id)
+  }, {
+    orderStatus,
+    estimatedTime,
+    $push: {
+      orderStatusHistory: {
+        status: orderStatus,
+        date: new Date().toISOString()
+      }
+    }
+  }, {
+    new: true
+  })
+
+  if(result) {
+    res.status(200).json(result)
+  } else {
+    res.status(404).json({
+      message: 'Not Found'
+    })
+  }
 })
 
 module.exports = router
