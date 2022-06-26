@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { categoryModel } = require('../models')
+const mongoose = require('mongoose')
 const ObjectId = require('mongoose').Types.ObjectId;
 
 router.get('/categories', async (req, res) => {
