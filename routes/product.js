@@ -4,21 +4,36 @@ const { productModel, categoryModel } = require('../models')
 const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose')
 
-router.get('/product', async (req, res) => {
-  let products;
+router.get('/products', async (req, res) => {
+  const result = await productModel.find()
 
-  if(req.query && req.query._id) {
-    const id = new ObjectId(req.query._id)
-    products = await productModel.findById(id)
-  } else {
-    products = await productModel.find()
-  }
-
-  if(products) {
-    res.status(200).json(products)
+  if(result) {
+    res.status(200).json(result)
   } else {
     res.status(404).json({
       message: 'Not Found'
+    })
+  }
+})
+
+router.get('/product', async (req, res) => {
+  const { _id } = req.query
+
+  if(_id) {
+    const result = await productModel.findOne({
+      _id: new ObjectId(_id)
+    })
+  
+    if(result) {
+      res.status(200).json(result)
+    } else {
+      res.status(404).json({
+        message: 'Not Found'
+      })
+    }
+  } else {
+    res.status(400).json({
+      message: 'Validation failure'
     })
   }
 })

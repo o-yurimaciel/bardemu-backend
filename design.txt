@@ -1,0 +1,16 @@
+Pedido
+
+order object
+  products array
+    productName
+    productPrice
+    productQuantity
+    productNote
+  clientPhone
+  clientAddress
+  clientAddressNumber
+  paymentType
+  cashChange
+  cardFlag
+
+

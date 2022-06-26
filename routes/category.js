@@ -1,20 +1,29 @@
 const express = require('express')
 const router = express.Router()
 const { categoryModel } = require('../models')
-const ObjectId = require('mongoose').Types.ObjectId; 
+const ObjectId = require('mongoose').Types.ObjectId;
+
+router.get('/categories', async (req, res) => {
+  const result = await categoryModel.find()
+
+  if(result) {
+    res.send(200).json(result)
+  } else {
+    res.send(404).json({
+      message: 'Not Found'
+    })
+  }
+})
 
 router.get('/category', async (req, res) => {
-  let categories;
+  const { _id } = req.query
 
-  if(req.query && req.query._id) {
-    const id = new ObjectId(req.query._id)
-    categories = await categoryModel.findById(id)
-  } else {
-    categories = await categoryModel.find()
-  }
+  const result = await categoryModel.findById({
+    _id: new ObjectId(_id)
+  })
 
-  if(categories) {
-    res.status(200).json(categories)
+  if(result) {
+    res.status(200).json(result)
   } else {
     res.status(404).json({
       message: 'Not Found'
