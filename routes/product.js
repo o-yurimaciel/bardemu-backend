@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { productModel, categoryModel } = require('../models')
 const ObjectId = require('mongoose').Types.ObjectId;
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 router.get('/products', async (req, res) => {
   const result = await productModel.find()
