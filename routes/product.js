@@ -41,6 +41,7 @@ router.get('/product', async (req, res) => {
 router.post('/product', (req, res) => {
   const product = {
     _id: new mongoose.Types.ObjectId(),
+    createdAt: new Date().toISOString(),
     name: req.body.name,
     description: req.body.description ? req.body.description : '',
     price: req.body.price ? req.body.price : 0,
@@ -99,10 +100,12 @@ router.put('/product', async (req, res) => {
   if(id) {
     const result = await productModel.findOneAndReplace({
       _id: id
-    }, req.body)
+    }, Object.assign(req.body, {
+      updatedAt: new Date().toISOString()
+    }))
 
     if(result) {
-      res.status(200).json(req.body)
+      res.status(200).json(result)
     } else {
       res.status(404).json({
         message: 'Not Found'

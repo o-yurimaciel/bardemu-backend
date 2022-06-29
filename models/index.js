@@ -2,6 +2,8 @@ const mongoose = require('mongoose')
 
 const productModel = mongoose.model('product', new mongoose.Schema({
   _id: mongoose.Types.ObjectId,
+  createdAt: Date,
+  updatedAt: Date,
   name: String,
   price: Number,
   description: String,
@@ -13,6 +15,8 @@ const productModel = mongoose.model('product', new mongoose.Schema({
 
 const categoryModel = mongoose.model('category', new mongoose.Schema({
   _id: mongoose.Types.ObjectId,
+  createdAt: Date,
+  updatedAt: Date,
   name: String,
   order: Number
 }, {
@@ -28,6 +32,8 @@ const loginModel = mongoose.model('login', new mongoose.Schema({
 
 const orderModel = mongoose.model('order', new mongoose.Schema({
   _id: mongoose.Types.ObjectId,
+  createdAt: Date,
+  updatedAt: Date,
   orderStatus: { type: String, required: true },
   totalValue: { type: Number, required: true },
   clientName: { type: String, required: true },

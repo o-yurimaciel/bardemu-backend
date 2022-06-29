@@ -54,6 +54,7 @@ router.post('/order', (req, res) => {
 
   const newOrder = new orderModel({
     _id: new mongoose.Types.ObjectId(),
+    createdAt: new Date().toISOString(),
     orderStatus,
     totalValue,
     products,
@@ -111,7 +112,7 @@ router.put('/order', async (req, res) => {
 
   if(statusAlreadyExist) {
     res.status(400).json({
-      message: `Status '${orderStatus}' already registered in order`,
+      message: `Duplicated status`,
       order: order
     })
   } else {
@@ -120,6 +121,7 @@ router.put('/order', async (req, res) => {
     }, {
       orderStatus,
       estimatedTime,
+      updatedAt: new Date().toISOString(),
       $push: {
         orderStatusHistory: {
           status: orderStatus,

@@ -35,6 +35,7 @@ router.get('/category', async (req, res) => {
 router.post('/category', (req, res) => {
   const category = {
     _id: new mongoose.Types.ObjectId(),
+    createdAt: new Date().toISOString(),
     name: req.body.name,
     order: req.body.order ? req.body.order : 1
   }
@@ -71,7 +72,8 @@ router.put('/category', async (req, res) => {
 
   const category = {
     name: req.body.name,
-    order: req.body.order
+    order: req.body.order,
+    updatedAt: new Date().toISOString()
   }
 
   if(category.name && category.order) {
