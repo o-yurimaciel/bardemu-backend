@@ -108,6 +108,21 @@ router.put('/order', async (req, res) => {
     _id: _id
   })
 
+  const validStatusOptions = [
+    "CONFIRMED",
+    "OUT_FOR_DELIVERY",
+    "DELIVERED"
+  ]
+
+  const isValidStatus = validStatusOptions.some((status) => status === orderStatus)
+
+  if(!isValidStatus) {
+    res.status(400).json({
+      message: 'Invalid status',
+      options: validStatusOptions
+    })
+  }
+
   const statusAlreadyExist = order.orderStatusHistory.some((history) => history.status === orderStatus)
 
   if(statusAlreadyExist) {
@@ -115,60 +130,60 @@ router.put('/order', async (req, res) => {
       message: `Duplicated status`,
       order: order
     })
-  } else {
-    const result = await orderModel.findOneAndUpdate({
-      _id: new ObjectId(_id)
-    }, {
-      orderStatus,
-      estimatedTime,
-      updatedAt: new Date().toISOString(),
-      $push: {
-        orderStatusHistory: {
-          status: orderStatus,
-          date: new Date().toISOString()
-        }
+  }
+
+  const result = await orderModel.findOneAndUpdate({
+    _id: new ObjectId(_id)
+  }, {
+    orderStatus,
+    estimatedTime,
+    updatedAt: new Date().toISOString(),
+    $push: {
+      orderStatusHistory: {
+        status: orderStatus,
+        date: new Date().toISOString()
       }
-    }, {
-      new: true
-    })
-  
-    if(result) {
-      let message;
-  
-      switch(orderStatus) {
-        case "CONFIRMED":
-          message = `Olá, ${order.clientName}! O seu pedido foi confirmado e está sendo preparado. Você pode acompanhá-lo pelo link https://bardemu.com.br/pedido/${order.id}`
-          break
-        case "OUT_FOR_DELIVERY":
-          message = `Olá, ${order.clientName}! O seu pedido acabou de sair para entrega.`
-          break
-        case "DELIVERED":
-          message = `Olá, ${order.clientName}! O seu pedido foi entregue. Por favor, avalie a sua entrega aqui -> https://bardemu.com.br/pedido/${order._id}`
-          break
-      }
-  
-      axios.post('https://graph.facebook.com/v13.0/111055524984269/messages', {
-        messaging_product: "whatsapp",
-        to: order.clientPhone.replace(/[^0-9]/g, ''),
-        type: "text",
-        text: {
-          preview_url: false,
-          body: message
-        }
-      }, {
-        headers: {
-          Authorization: 'Bearer EAAEwitQakngBADmabwalYZCNrpdi0uwSI8N4Im3NBnc76S1ZBJIUTMkSUZCh4MQk7HqwMBVZCDX8qP8ejoxIQvUCvXhZCeGy2py2bfGbkQukG34DoEEnJGPfGIFj4rizl1o7pejEgEKmGZBzPI4OZB3JR1t1s92lZCP6NX5RtYSm0BU1hyC6i8zBKN1MTndnT3DaykkNqQMJeAZDZD'
-        }
-      }).then((res) => {
-        res.status(200).json(result)
-      }).catch((e) => {
-        res.status(200).json(result)
-      })
-    } else {
-      res.status(404).json({
-        message: 'Not Found'
-      })
     }
+  }, {
+    new: true
+  })
+
+  if(result) {
+    let message;
+
+    switch(orderStatus) {
+      case "CONFIRMED":
+        message = `Olá, ${order.clientName}! O seu pedido foi confirmado e está sendo preparado. Você pode acompanhá-lo pelo link https://bardemu.com.br/pedido/${order.id}`
+        break
+      case "OUT_FOR_DELIVERY":
+        message = `Olá, ${order.clientName}! O seu pedido acabou de sair para entrega.`
+        break
+      case "DELIVERED":
+        message = `Olá, ${order.clientName}! O seu pedido foi entregue. Por favor, avalie a sua entrega aqui -> https://bardemu.com.br/pedido/${order._id}`
+        break
+    }
+
+    axios.post('https://graph.facebook.com/v13.0/111055524984269/messages', {
+      messaging_product: "whatsapp",
+      to: order.clientPhone.replace(/[^0-9]/g, ''),
+      type: "text",
+      text: {
+        preview_url: false,
+        body: message
+      }
+    }, {
+      headers: {
+        Authorization: 'Bearer EAAEwitQakngBADmabwalYZCNrpdi0uwSI8N4Im3NBnc76S1ZBJIUTMkSUZCh4MQk7HqwMBVZCDX8qP8ejoxIQvUCvXhZCeGy2py2bfGbkQukG34DoEEnJGPfGIFj4rizl1o7pejEgEKmGZBzPI4OZB3JR1t1s92lZCP6NX5RtYSm0BU1hyC6i8zBKN1MTndnT3DaykkNqQMJeAZDZD'
+      }
+    }).then((res) => {
+      res.status(200).json(result)
+    }).catch((e) => {
+      res.status(200).json(result)
+    })
+  } else {
+    res.status(404).json({
+      message: 'Not Found'
+    })
   }
 })
 
