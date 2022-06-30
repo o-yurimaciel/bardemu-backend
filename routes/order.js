@@ -84,7 +84,7 @@ router.post('/order', (req, res) => {
       type: "text",
       text: {
         preview_url: false,
-        body: `Olá ${clientName}! O seu pedido foi computado e está aguardando confirmação.`
+        body: `Olá ${clientName}! O seu pedido foi registrado e está aguardando confirmação.`
       }
     }, {
       headers: {
@@ -111,7 +111,8 @@ router.put('/order', async (req, res) => {
   const validStatusOptions = [
     "CONFIRMED",
     "OUT_FOR_DELIVERY",
-    "DELIVERED"
+    "DELIVERED",
+    "CANCELLED"
   ]
 
   const isValidStatus = validStatusOptions.some((status) => status === orderStatus)
@@ -120,7 +121,7 @@ router.put('/order', async (req, res) => {
     res.status(400).json({
       message: 'Invalid status',
       options: validStatusOptions
-    })
+    })    
   }
 
   const statusAlreadyExist = order.orderStatusHistory.some((history) => history.status === orderStatus)
@@ -160,6 +161,9 @@ router.put('/order', async (req, res) => {
         break
       case "DELIVERED":
         message = `Olá, ${order.clientName}! O seu pedido foi entregue. Por favor, avalie a sua entrega aqui -> https://bardemu.com.br/pedido/${order._id}`
+        break
+      case "CANCELLED":
+        message = `Olá, ${order.clientName}! O seu pedido foi cancelado.`
         break
     }
 
