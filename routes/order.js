@@ -88,7 +88,7 @@ router.post('/order', (req, res) => {
       }
     }, {
       headers: {
-        Authorization: 'Bearer EAAEwitQakngBAGbRCL1wJvNCDmwxkcZAmwsEj2sZCVOCbwedvo3turCohdV1gfXeOTKNpDB8PyZCaFwAZCJJvZCVsArjSZCbXXYFg4ZBcvLkB4tBIZBkIqe11zfEerVjK5NBtn4ou9BcFQ7lMv0XNyBVE92QIQzuqIqprnGmoL5QRPg4CxZAswbVxv828DHsOkr7Jfw7TvMoBwgZDZD'
+        Authorization: process.env.WHATSAPP_TOKEN
       }
     }).then((res) => {
       console.log(res)
@@ -177,11 +177,13 @@ router.put('/order', async (req, res) => {
       }
     }, {
       headers: {
-        Authorization: 'Bearer EAAEwitQakngBADmabwalYZCNrpdi0uwSI8N4Im3NBnc76S1ZBJIUTMkSUZCh4MQk7HqwMBVZCDX8qP8ejoxIQvUCvXhZCeGy2py2bfGbkQukG34DoEEnJGPfGIFj4rizl1o7pejEgEKmGZBzPI4OZB3JR1t1s92lZCP6NX5RtYSm0BU1hyC6i8zBKN1MTndnT3DaykkNqQMJeAZDZD'
+        Authorization: process.env.WHATSAPP_TOKEN
       }
     }).then((res) => {
+      console.log(res)
       res.status(200).json(result)
     }).catch((e) => {
+      console.log(e.response)
       res.status(200).json(result)
     })
   } else {

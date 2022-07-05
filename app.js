@@ -11,9 +11,7 @@ const categoryRouter = require('./routes/category')
 const loginRouter = require('./routes/login')
 const orderRouter = require('./routes/order')
 
-// const mongoDB = process.env.BARDEMU_DB
-mongoose.connect('mongodb+srv://bardemu-app:maciel051@bardemu.fjffdzx.mongodb.net/bardemu?retryWrites=true&w=majority', 
-{ useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.BARDEMU_DB, { useNewUrlParser: true, useUnifiedTopology: true })
 const db = mongoose.connection
 
 app.use(cors({
