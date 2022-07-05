@@ -78,25 +78,7 @@ router.post('/order', (req, res) => {
     if(err) {
       res.status(400).json(err)
     }
-    axios.post('https://graph.facebook.com/v13.0/111055524984269/messages', {
-      messaging_product: "whatsapp",
-      to: clientPhone.replace(/[^0-9]/g, ''),
-      type: "text",
-      text: {
-        preview_url: false,
-        body: `Olá ${clientName}! O seu pedido foi registrado e está aguardando confirmação.`
-      }
-    }, {
-      headers: {
-        Authorization: process.env.WHATSAPP_TOKEN
-      }
-    }).then((res) => {
-      console.log(res)
-      res.status(200).json(newOrder)
-    }).catch((e) => {
-      console.log(e.response)
-      res.status(200).json(newOrder)
-    })
+    res.status(200).json(newOrder)
   })
 })
 
