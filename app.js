@@ -10,6 +10,8 @@ const productRouter = require('./routes/product')
 const categoryRouter = require('./routes/category')
 const loginRouter = require('./routes/login')
 const orderRouter = require('./routes/order')
+const appWs = require('./websocket')
+const eventEmitter = require('./eventEmitter')
 
 mongoose.connect(process.env.BARDEMU_DB, { useNewUrlParser: true, useUnifiedTopology: true })
 const db = mongoose.connection
@@ -29,6 +31,12 @@ app.get('/', (req, res) => {
   res.send("Up!")
 })
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log('listening on ', port)
+})
+
+const wss = appWs(server)
+
+eventEmitter.on('wss-broadcast', (data) => {
+  wss.broadcast(data)
 })

@@ -4,6 +4,7 @@ const { orderModel } = require('../models')
 const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
 const { default: axios } = require('axios');
+const eventEmitter = require('../eventEmitter')
 
 router.get('/orders', (req, res) => {
   orderModel.find(function(err, response) {
@@ -78,6 +79,7 @@ router.post('/order', (req, res) => {
     if(err) {
       res.status(400).json(err)
     }
+    eventEmitter.emit('wss-broadcast', newOrder)
     res.status(200).json(newOrder)
   })
 })
@@ -149,7 +151,7 @@ router.put('/order', async (req, res) => {
         break
     }
 
-    axios.post('https://graph.facebook.com/v13.0/111055524984269/messages', {
+    axios.post(`https://graph.facebook.com/v13.0/${process.env.WHATSAPP_CLIENT_ID}/messages`, {
       messaging_product: "whatsapp",
       to: order.clientPhone.replace(/[^0-9]/g, ''),
       type: "text",
