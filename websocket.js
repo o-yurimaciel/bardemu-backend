@@ -4,9 +4,8 @@ function onError(ws, err) {
   console.error(`onError: ${err.message}`);
 }
  
-function onMessage(ws, data) {
-  console.log(`onMessage: ${data}`);
-  ws.send(`recebido!`);
+function onMessage(ws) {
+  ws.send(`Received!`);
 }
 
 function broadcast(jsonObject) {

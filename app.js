@@ -39,4 +39,4 @@ const wss = appWs(server)
 
 eventEmitter.on('wss-broadcast', (data) => {
   wss.broadcast(data)
-})
+}).setMaxListeners(0)
