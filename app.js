@@ -4,7 +4,6 @@ const port = process.env.PORT || 5050
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 require('dotenv/config')
-app.use(bodyParser())
 const cors = require('cors')
 const productRouter = require('./routes/product')
 const categoryRouter = require('./routes/category')
@@ -16,6 +15,7 @@ const eventEmitter = require('./eventEmitter')
 mongoose.connect(process.env.BARDEMU_DB, { useNewUrlParser: true, useUnifiedTopology: true })
 const db = mongoose.connection
 
+app.use(bodyParser.json())
 app.use(cors({
   origin: '*'
 }));
