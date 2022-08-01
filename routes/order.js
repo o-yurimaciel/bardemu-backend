@@ -134,22 +134,23 @@ router.put('/order', async (req, res) => {
   })
 
   if(result) {
-    let message;
+    res.status(200).json(result)
+    // let message;
 
-    switch(orderStatus) {
-      case "CONFIRMED":
-        message = `Olá, ${order.clientName}! O seu pedido foi confirmado e está sendo preparado. Você pode acompanhá-lo pelo link https://bardemu.com.br/pedido/${order.id}`
-        break
-      case "OUT_FOR_DELIVERY":
-        message = `Olá, ${order.clientName}! O seu pedido acabou de sair para entrega.`
-        break
-      case "DELIVERED":
-        message = `Olá, ${order.clientName}! O seu pedido foi entregue. Por favor, avalie a sua entrega aqui -> https://bardemu.com.br/pedido/${order._id}`
-        break
-      case "CANCELLED":
-        message = `Olá, ${order.clientName}! O seu pedido foi cancelado.`
-        break
-    }
+    // switch(orderStatus) {
+    //   case "CONFIRMED":
+    //     message = `Olá, ${order.clientName}! O seu pedido foi confirmado e está sendo preparado. Você pode acompanhá-lo pelo link https://bardemu.com.br/pedido/${order.id}`
+    //     break
+    //   case "OUT_FOR_DELIVERY":
+    //     message = `Olá, ${order.clientName}! O seu pedido acabou de sair para entrega.`
+    //     break
+    //   case "DELIVERED":
+    //     message = `Olá, ${order.clientName}! O seu pedido foi entregue. Por favor, avalie a sua entrega aqui -> https://bardemu.com.br/pedido/${order._id}`
+    //     break
+    //   case "CANCELLED":
+    //     message = `Olá, ${order.clientName}! O seu pedido foi cancelado.`
+    //     break
+    // }
 
     // axios.post(`https://graph.facebook.com/v13.0/${process.env.WHATSAPP_CLIENT_ID}/messages`, {
     //   messaging_product: "whatsapp",
