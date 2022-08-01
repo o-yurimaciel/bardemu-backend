@@ -151,25 +151,25 @@ router.put('/order', async (req, res) => {
         break
     }
 
-    axios.post(`https://graph.facebook.com/v13.0/${process.env.WHATSAPP_CLIENT_ID}/messages`, {
-      messaging_product: "whatsapp",
-      to: order.clientPhone.replace(/[^0-9]/g, ''),
-      type: "text",
-      text: {
-        preview_url: false,
-        body: message
-      }
-    }, {
-      headers: {
-        Authorization: process.env.WHATSAPP_TOKEN
-      }
-    }).then((res) => {
-      console.log(res)
-      res.status(200).json(result)
-    }).catch((e) => {
-      console.log(e.response)
-      res.status(200).json(result)
-    })
+    // axios.post(`https://graph.facebook.com/v13.0/${process.env.WHATSAPP_CLIENT_ID}/messages`, {
+    //   messaging_product: "whatsapp",
+    //   to: order.clientPhone.replace(/[^0-9]/g, ''),
+    //   type: "text",
+    //   text: {
+    //     preview_url: false,
+    //     body: message
+    //   }
+    // }, {
+    //   headers: {
+    //     Authorization: process.env.WHATSAPP_TOKEN
+    //   }
+    // }).then((res) => {
+    //   console.log(res)
+    //   res.status(200).json(result)
+    // }).catch((e) => {
+    //   console.log(e.response)
+    //   res.status(200).json(result)
+    // })
   } else {
     res.status(404).json({
       message: 'Not Found'
