@@ -3,7 +3,6 @@ const router = express.Router()
 const { orderModel } = require('../models')
 const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
-const { default: axios } = require('axios');
 const eventEmitter = require('../eventEmitter')
 
 router.get('/orders', (req, res) => {
@@ -72,7 +71,8 @@ router.post('/order', (req, res) => {
         status: orderStatus,
         date: new Date().toISOString()
       }
-    ]
+    ],
+    deliveryId: clientPhone.slice(clientPhone.length - 4)
   })
 
   newOrder.save(function(err) {
@@ -105,7 +105,8 @@ router.put('/order', async (req, res) => {
     res.status(400).json({
       message: 'Invalid status',
       options: validStatusOptions
-    })    
+    })
+    return    
   }
 
   const statusAlreadyExist = order.orderStatusHistory.some((history) => history.status === orderStatus)
@@ -115,13 +116,39 @@ router.put('/order', async (req, res) => {
       message: `Duplicated status`,
       order: order
     })
+    return
   }
 
-  const result = await orderModel.findOneAndUpdate({
+  let message = null
+
+  switch(orderStatus) {
+    case "CONFIRMED":
+      if(estimatedTime) {
+        message = `Olá, ${order.clientName}.\n O seu pedido foi confirmado e está já sendo preparado.\nA previsão de entrega é de ${estimatedTime} minutos.\n\nVocê será avisado quando o pedido sair para a entrega.\nBarDeMu agradece a preferência. :)`
+      } else {
+        res.status(400).json({
+          message: 'invalid estimatedTime'
+        })
+        return 
+      }
+      break
+    case "OUT_FOR_DELIVERY":
+      message = `O seu pedido acabou de sair para entrega. Por favor, informe o código "${order.deliveryId}" ao motoboy para receber.`
+      break
+    case "DELIVERED":
+      message = `O seu pedido foi entregue. Por favor, avalie a sua entrega aqui -> https://bardemu.com.br/pedido/${order._id}`
+      break
+    case "CANCELLED":
+      message = `Olá, ${order.clientName}! O seu pedido foi cancelado.`
+      break
+  }
+
+  let result = await orderModel.findOneAndUpdate({
     _id: new ObjectId(_id)
   }, {
     orderStatus,
     estimatedTime,
+    message,
     updatedAt: new Date().toISOString(),
     $push: {
       orderStatusHistory: {
@@ -135,24 +162,7 @@ router.put('/order', async (req, res) => {
 
   if(result) {
     res.status(200).json(result)
-    // let message;
-
-    // switch(orderStatus) {
-    //   case "CONFIRMED":
-    //     message = `Olá, ${order.clientName}! O seu pedido foi confirmado e está sendo preparado. Você pode acompanhá-lo pelo link https://bardemu.com.br/pedido/${order.id}`
-    //     break
-    //   case "OUT_FOR_DELIVERY":
-    //     message = `Olá, ${order.clientName}! O seu pedido acabou de sair para entrega.`
-    //     break
-    //   case "DELIVERED":
-    //     message = `Olá, ${order.clientName}! O seu pedido foi entregue. Por favor, avalie a sua entrega aqui -> https://bardemu.com.br/pedido/${order._id}`
-    //     break
-    //   case "CANCELLED":
-    //     message = `Olá, ${order.clientName}! O seu pedido foi cancelado.`
-    //     break
-    // }
-
-    // axios.post(`https://graph.facebook.com/v13.0/${process.env.WHATSAPP_CLIENT_ID}/messages`, {
+      // axios.post(`https://graph.facebook.com/v13.0/${process.env.WHATSAPP_CLIENT_ID}/messages`, {
     //   messaging_product: "whatsapp",
     //   to: order.clientPhone.replace(/[^0-9]/g, ''),
     //   type: "text",
