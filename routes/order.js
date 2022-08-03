@@ -124,7 +124,7 @@ router.put('/order', async (req, res) => {
   switch(orderStatus) {
     case "CONFIRMED":
       if(estimatedTime) {
-        message = `Olá, ${order.clientName}.\n O seu pedido foi confirmado e está já sendo preparado.\nA previsão de entrega é de ${estimatedTime} minutos.\n\nVocê será avisado quando o pedido sair para a entrega.\nBarDeMu agradece a preferência. :)`
+        message = `Olá, ${order.clientName}.\nO seu pedido foi confirmado e já sendo preparado.\nA previsão de entrega é de ${estimatedTime} minutos.\n\nVocê será avisado quando o pedido sair para a entrega.\nBarDeMu agradece a preferência. :)`
       } else {
         res.status(400).json({
           message: 'invalid estimatedTime'
@@ -133,17 +133,17 @@ router.put('/order', async (req, res) => {
       }
       break
     case "OUT_FOR_DELIVERY":
-      message = `O seu pedido acabou de sair para entrega. Por favor, informe o código "${order.deliveryId}" ao motoboy para receber.`
+      message = `O seu pedido acabou de sair para entrega.\nPor favor, informe o código "${order.deliveryId}" ao motoboy para receber.`
       break
     case "DELIVERED":
-      message = `O seu pedido foi entregue. Por favor, avalie a sua entrega aqui -> https://bardemu.com.br/pedido/${order._id}`
+      message = `O seu pedido foi entregue.\nAvalie a sua experiência aqui -> https://bardemu.com.br/pedido/${order._id}`
       break
     case "CANCELLED":
       message = `Olá, ${order.clientName}! O seu pedido foi cancelado.`
       break
   }
 
-  let result = await orderModel.findOneAndUpdate({
+  const result = await orderModel.findOneAndUpdate({
     _id: new ObjectId(_id)
   }, {
     orderStatus,
