@@ -40,7 +40,7 @@ const orderModel = mongoose.model('order', new mongoose.Schema({
   clientPhone: { type: String, required: true },
   clientAddress: { type: String, required: true },
   clientAddressNumber: { type: String, required: true },
-  clientAddressData: String,
+  clientAddressData: { type: String },
   paymentType: { type: String, required: true },
   cashChange: Number,
   cardFlag: String,

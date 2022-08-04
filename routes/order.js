@@ -44,6 +44,7 @@ router.post('/order', (req, res) => {
     clientAddress, 
     clientAddressName, 
     clientAddressNumber, 
+    clientAddressData,
     paymentType, 
     cashChange, 
     cardFlag,
@@ -61,6 +62,7 @@ router.post('/order', (req, res) => {
     clientName,
     clientPhone,
     clientAddress,
+    clientAddressData,
     clientAddressName,
     clientAddressNumber,
     paymentType,
@@ -78,6 +80,7 @@ router.post('/order', (req, res) => {
   newOrder.save(function(err) {
     if(err) {
       res.status(400).json(err)
+      return
     }
     eventEmitter.emit('wss-broadcast', newOrder)
     res.status(200).json(newOrder)
