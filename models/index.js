@@ -59,7 +59,7 @@ const feedbackModel = mongoose.model('feedback', new mongoose.Schema({
   orderId: { type: mongoose.Types.ObjectId, required: true },
   createdAt: Date,
   message: String,
-  note: { type: Number, required: true}
+  rating: { type: Number, required: true}
 }, {
   collection: 'feedback'
 }))

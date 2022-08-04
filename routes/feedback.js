@@ -6,14 +6,14 @@ const ObjectId = require('mongoose').Types.ObjectId;
 const eventEmitter = require('../eventEmitter')
 
 router.post('/feedback', async (req, res) => {
-  const { orderId, message, note } = req.body
+  const { orderId, message, rating } = req.body
 
   const newFeedback = await new feedbackModel({
     _id: new mongoose.Types.ObjectId(),
     orderId,
     createdAt: new Date().toISOString(),
-    message: message,
-    note: note
+    message,
+    rating
   })
 
   if(newFeedback) {
