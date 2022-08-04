@@ -49,7 +49,7 @@ const orderModel = mongoose.model('order', new mongoose.Schema({
   deliveryId: { type: String },
   orderStatusHistory: Array,
   message: { type: String },
-  feedbacks: { type: Array }
+  feedback: { type: Object }
 }, {
   collection: 'order'
 }))

@@ -74,7 +74,7 @@ router.post('/order', (req, res) => {
         date: new Date().toISOString()
       }
     ],
-    deliveryId: clientPhone.slice(clientPhone.length - 4)
+    deliveryId: clientPhone ? clientPhone.slice(clientPhone.length - 4) : null
   })
 
   newOrder.save(function(err) {
@@ -82,7 +82,7 @@ router.post('/order', (req, res) => {
       res.status(400).json(err)
       return
     }
-    eventEmitter.emit('wss-broadcast', newOrder)
+    eventEmitter.emit('wss-broadcast', Object.assign({ type: 'order'}, newOrder))
     res.status(200).json(newOrder)
   })
 })

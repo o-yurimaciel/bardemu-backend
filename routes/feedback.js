@@ -3,6 +3,7 @@ const router = express.Router()
 const { feedbackModel, orderModel } = require('../models')
 const mongoose = require('mongoose')
 const ObjectId = require('mongoose').Types.ObjectId;
+const eventEmitter = require('../eventEmitter')
 
 router.post('/feedback', async (req, res) => {
   const { orderId, message, note } = req.body
@@ -25,12 +26,11 @@ router.post('/feedback', async (req, res) => {
       const findOrder = await orderModel.findOneAndUpdate({
         _id: new ObjectId(orderId)
       }, {
-        $push: {
-          feedbacks: newFeedback
-        }
+        feedback: newFeedback
       })
 
       if(findOrder) {
+        eventEmitter.emit('wss-broadcast', Object.assign({ type: 'feedback'}, newFeedback))
         res.status(200).json(newFeedback)
       } else {
         res.status(404).json({
