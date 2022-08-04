@@ -9,6 +9,7 @@ const productRouter = require('./routes/product')
 const categoryRouter = require('./routes/category')
 const loginRouter = require('./routes/login')
 const orderRouter = require('./routes/order')
+const feedbackRouter = require('./routes/feedback')
 const appWs = require('./websocket')
 const eventEmitter = require('./eventEmitter')
 
@@ -24,6 +25,7 @@ app.use(productRouter)
 app.use(categoryRouter)
 app.use(loginRouter)
 app.use(orderRouter)
+app.use(feedbackRouter)
 
 db.on('error', console.error.bind(console, 'MongoDB connection error'))
 

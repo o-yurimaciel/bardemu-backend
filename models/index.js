@@ -48,14 +48,26 @@ const orderModel = mongoose.model('order', new mongoose.Schema({
   estimatedTime: { type: Number },
   deliveryId: { type: String },
   orderStatusHistory: Array,
-  message: { type: String }
+  message: { type: String },
+  feedbacks: { type: Array }
 }, {
   collection: 'order'
+}))
+
+const feedbackModel = mongoose.model('feedback', new mongoose.Schema({
+  _id: mongoose.Types.ObjectId,
+  orderId: { type: mongoose.Types.ObjectId, required: true },
+  createdAt: Date,
+  message: String,
+  note: { type: Number, required: true}
+}, {
+  collection: 'feedback'
 }))
 
 module.exports = {
   productModel,
   categoryModel,
   loginModel,
-  orderModel
+  orderModel,
+  feedbackModel
 }
