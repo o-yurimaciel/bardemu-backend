@@ -124,7 +124,7 @@ router.put('/order', async (req, res) => {
   switch(orderStatus) {
     case "CONFIRMED":
       if(estimatedTime) {
-        message = `Olá, ${order.clientName}.\nO seu pedido foi confirmado e já sendo preparado.\nA previsão de entrega é de ${estimatedTime} minutos.\n\nVocê será avisado quando o pedido sair para a entrega.\nBarDeMu agradece a preferência. :)`
+        message = `Olá, ${order.clientName}.\nO seu pedido foi confirmado e já está sendo preparado.\nA previsão de entrega é de ${estimatedTime} minutos.\n\nVocê será avisado quando o pedido sair para a entrega.\nBarDeMu agradece a preferência. :)`
       } else {
         res.status(400).json({
           message: 'invalid estimatedTime'
