@@ -23,15 +23,21 @@ router.post('/feedback', async (req, res) => {
         return
       }
 
-      const findOrder = await orderModel.findOneAndUpdate({
+      const order = await orderModel.findOneAndUpdate({
         _id: new ObjectId(orderId)
       }, {
         feedback: newFeedback
       })
 
-      if(findOrder) {
-        eventEmitter.emit('wss-broadcast', Object.assign({ type: 'feedback'}, newFeedback))
-        res.status(200).json(newFeedback)
+      if(order) {
+        if(!order.feedback) {
+          eventEmitter.emit('wss-broadcast', Object.assign({ type: 'feedback'}, newFeedback))
+          res.status(200).json(newFeedback)
+        } else {
+          res.status(400).json({
+            message: "A feedback has already been registered"
+          })
+        }
       } else {
         res.status(404).json({
           message: "NotFound"
