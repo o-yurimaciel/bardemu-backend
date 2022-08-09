@@ -35,12 +35,12 @@ router.post('/feedback', async (req, res) => {
           res.status(200).json(newFeedback)
         } else {
           res.status(400).json({
-            message: "A feedback has already been registered"
+            message: "Um feedback já foi registrado no pedido"
           })
         }
       } else {
         res.status(404).json({
-          message: "NotFound"
+          message: "Pedido não encontrado"
         })
       }
     })

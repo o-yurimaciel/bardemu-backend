@@ -3,6 +3,7 @@ const router = express.Router()
 const { categoryModel } = require('../models')
 const mongoose = require('mongoose')
 const ObjectId = require('mongoose').Types.ObjectId;
+const auth = require('../middleware/auth')
 
 router.get('/categories', async (req, res) => {
   const result = await categoryModel.find()
@@ -32,7 +33,7 @@ router.get('/category', async (req, res) => {
   }
 })
 
-router.post('/category', (req, res) => {
+router.post('/category', auth, (req, res) => {
   const category = {
     _id: new mongoose.Types.ObjectId(),
     createdAt: new Date().toISOString(),
@@ -54,7 +55,7 @@ router.post('/category', (req, res) => {
   }
 })
 
-router.delete('/category', async (req, res) => {
+router.delete('/category', auth, async (req, res) => {
   console.log(req.body)
   const id = new ObjectId(req.body._id)
   const result = await categoryModel.deleteOne({ _id: id })
@@ -66,7 +67,7 @@ router.delete('/category', async (req, res) => {
   }
 })
 
-router.put('/category', async (req, res) => {
+router.put('/category', auth, async (req, res) => {
   console.log(req.body)
   const id = new ObjectId(req.query._id)
 

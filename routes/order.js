@@ -4,14 +4,18 @@ const { orderModel } = require('../models')
 const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
 const eventEmitter = require('../eventEmitter')
+const auth = require('../middleware/auth')
 
-router.get('/orders', (req, res) => {
-  orderModel.find(function(err, response) {
-    if(err) {
-      res.status(400).json(err)
-    }
-    res.status(200).json(response)
-  })
+router.get('/orders', auth, async (req, res) => {
+  const result = await orderModel.find()
+
+  if(result) {
+    res.status(200).json(result)
+  } else {
+    res.status(404).json({
+      message: "Nenhum pedido foi encontrado"
+    })
+  }
 })
 
 router.get('/order', async (req, res) => {
@@ -26,12 +30,12 @@ router.get('/order', async (req, res) => {
       res.status(200).json(result)
     } else {
       res.status(404).json({
-        message: 'Not Found'
+        message: 'Pedido não encontrado'
       })
     }
   } else {
-    res.status(404).json({
-      message: 'Validation failure'
+    res.status(400).json({
+      message: 'Erro de validação'
     })
   }
 })
@@ -87,7 +91,7 @@ router.post('/order', (req, res) => {
   })
 })
 
-router.put('/order', async (req, res) => {
+router.put('/order', auth, async (req, res) => {
   const { _id } = req.query
   const { orderStatus, estimatedTime } = req.body
 
@@ -106,7 +110,7 @@ router.put('/order', async (req, res) => {
 
   if(!isValidStatus) {
     res.status(400).json({
-      message: 'Invalid status',
+      message: 'Status de pedido inválido',
       options: validStatusOptions
     })
     return    
@@ -116,7 +120,7 @@ router.put('/order', async (req, res) => {
 
   if(statusAlreadyExist) {
     res.status(400).json({
-      message: `Duplicated status`,
+      message: `Status duplicado`,
       order: order
     })
     return
@@ -130,7 +134,7 @@ router.put('/order', async (req, res) => {
         message = `Olá, ${order.clientName}.\nO seu pedido foi confirmado e já está sendo preparado.\nA previsão de entrega é de ${estimatedTime} minutos.\n\nVocê será avisado quando o pedido sair para a entrega.\nBarDeMu agradece a preferência. :)`
       } else {
         res.status(400).json({
-          message: 'invalid estimatedTime'
+          message: 'Tempo estimado de entrega inválido'
         })
         return 
       }
@@ -165,28 +169,9 @@ router.put('/order', async (req, res) => {
 
   if(result) {
     res.status(200).json(result)
-      // axios.post(`https://graph.facebook.com/v13.0/${process.env.WHATSAPP_CLIENT_ID}/messages`, {
-    //   messaging_product: "whatsapp",
-    //   to: order.clientPhone.replace(/[^0-9]/g, ''),
-    //   type: "text",
-    //   text: {
-    //     preview_url: false,
-    //     body: message
-    //   }
-    // }, {
-    //   headers: {
-    //     Authorization: process.env.WHATSAPP_TOKEN
-    //   }
-    // }).then((res) => {
-    //   console.log(res)
-    //   res.status(200).json(result)
-    // }).catch((e) => {
-    //   console.log(e.response)
-    //   res.status(200).json(result)
-    // })
   } else {
     res.status(404).json({
-      message: 'Not Found'
+      message: 'Pedido não encontrado'
     })
   }
 })

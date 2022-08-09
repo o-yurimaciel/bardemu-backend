@@ -7,9 +7,9 @@ require('dotenv/config')
 const cors = require('cors')
 const productRouter = require('./routes/product')
 const categoryRouter = require('./routes/category')
-const loginRouter = require('./routes/login')
 const orderRouter = require('./routes/order')
 const feedbackRouter = require('./routes/feedback')
+const userRouter = require('./routes/user')
 const appWs = require('./websocket')
 const eventEmitter = require('./eventEmitter')
 
@@ -23,9 +23,9 @@ app.use(cors({
 
 app.use(productRouter)
 app.use(categoryRouter)
-app.use(loginRouter)
 app.use(orderRouter)
 app.use(feedbackRouter)
+app.use(userRouter)
 
 db.on('error', console.error.bind(console, 'MongoDB connection error'))
 

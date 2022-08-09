@@ -3,6 +3,7 @@ const router = express.Router()
 const { productModel, categoryModel } = require('../models')
 const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
+const auth = require('../middleware/auth')
 
 router.get('/products', async (req, res) => {
   const result = await productModel.find()
@@ -11,7 +12,7 @@ router.get('/products', async (req, res) => {
     res.status(200).json(result)
   } else {
     res.status(404).json({
-      message: 'Not Found'
+      message: 'Nenhum produto foi encontrado'
     })
   }
 })
@@ -28,17 +29,17 @@ router.get('/product', async (req, res) => {
       res.status(200).json(result)
     } else {
       res.status(404).json({
-        message: 'Not Found'
+        message: 'Produto não encontrado'
       })
     }
   } else {
     res.status(400).json({
-      message: 'Validation failure'
+      message: 'Erro de validação'
     })
   }
 })
 
-router.post('/product', (req, res) => {
+router.post('/product', auth, (req, res) => {
   const product = {
     _id: new mongoose.Types.ObjectId(),
     createdAt: new Date().toISOString(),
@@ -65,17 +66,17 @@ router.post('/product', (req, res) => {
       })
     } else {
       res.status(404).json({
-        message: 'Category not found'
+        message: 'Categoria não encontrada'
       })
     }
   } else {
     res.status(400).json({
-      message: 'Validation failure'
+      message: 'Erro de validação'
     })
   }
 })
 
-router.delete('/product', async (req, res) => {
+router.delete('/product', auth, async (req, res) => {
   const id = new ObjectId(req.body._id)
 
   if(id) {
@@ -84,17 +85,17 @@ router.delete('/product', async (req, res) => {
       res.status(200).json({})
     } else {
       res.status(404).json({
-        message: 'Not Found'
+        message: 'Produto não encontrado'
       })
     }
   } else {
     res.status(400).json({
-      message: 'Validation failure'
+      message: 'Erro de validação'
     })
   }
 })
 
-router.put('/product', async (req, res) => {
+router.put('/product', auth, async (req, res) => {
   const id = new ObjectId(req.query._id)
 
   if(id) {
@@ -108,12 +109,12 @@ router.put('/product', async (req, res) => {
       res.status(200).json(result)
     } else {
       res.status(404).json({
-        message: 'Not Found'
+        message: 'Produto não encontrado'
       })
     }
   } else {
     res.status(400).json({
-      message: 'Validation failure'
+      message: 'Erro de validação'
     })
   }
 })

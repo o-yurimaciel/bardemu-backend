@@ -64,10 +64,19 @@ const feedbackModel = mongoose.model('feedback', new mongoose.Schema({
   collection: 'feedback'
 }))
 
+const userModel = mongoose.model('user', new mongoose.Schema({
+  firstName: { type: String },
+  lastName: { type: String },
+  email: { type: String, unique: true },
+  password: { type: String },
+  token: { type: String }
+}))
+
 module.exports = {
   productModel,
   categoryModel,
   loginModel,
   orderModel,
-  feedbackModel
+  feedbackModel,
+  userModel
 }
