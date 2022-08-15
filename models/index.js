@@ -32,6 +32,7 @@ const loginModel = mongoose.model('login', new mongoose.Schema({
 
 const orderModel = mongoose.model('order', new mongoose.Schema({
   _id: mongoose.Types.ObjectId,
+  userId: mongoose.Types.ObjectId,
   createdAt: Date,
   updatedAt: Date,
   orderStatus: { type: String, required: true },
@@ -65,11 +66,15 @@ const feedbackModel = mongoose.model('feedback', new mongoose.Schema({
 }))
 
 const userModel = mongoose.model('user', new mongoose.Schema({
+  _id: mongoose.Types.ObjectId,
   firstName: { type: String },
   lastName: { type: String },
+  fullName: { type: String },
   email: { type: String, unique: true },
+  phone: { type: String },
   password: { type: String },
-  token: { type: String }
+  token: { type: String },
+  address: { type: Object }
 }))
 
 module.exports = {

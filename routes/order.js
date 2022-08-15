@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { orderModel } = require('../models')
+const { orderModel, userModel } = require('../models')
 const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
 const eventEmitter = require('../eventEmitter')
@@ -18,7 +18,21 @@ router.get('/orders', auth, async (req, res) => {
   }
 })
 
-router.get('/order', async (req, res) => {
+router.get('/user/orders', auth, async (req, res) => {
+  const { userId } = req.query
+
+  const result = await orderModel.find({ userId })
+
+  if(result) {
+    res.status(200).json(result)
+  } else {
+    res.status(404).json({
+      message: "Nenhum pedido foi encontrado"
+    })
+  }
+})
+
+router.get('/order', auth, async (req, res) => {
   const { _id } = req.query
 
   if(_id) {
@@ -40,55 +54,63 @@ router.get('/order', async (req, res) => {
   }
 })
 
-router.post('/order', (req, res) => {
+router.post('/order', auth, async (req, res) => {
   const { 
     totalValue,
-    clientName, 
-    clientPhone, 
-    clientAddress, 
-    clientAddressName, 
-    clientAddressNumber, 
-    clientAddressData,
     paymentType, 
     cashChange, 
     cardFlag,
-    products
+    products,
+    userId,
+    clientAddress,
+    clientAddressName,
+    clientAddressData,
+    clientAddressNumber
   } = req.body
 
   const orderStatus = "PENDING"
+  const id = new ObjectId(userId) 
+  const user = await userModel.findOne({ _id: id })
 
-  const newOrder = new orderModel({
-    _id: new mongoose.Types.ObjectId(),
-    createdAt: new Date().toISOString(),
-    orderStatus,
-    totalValue,
-    products,
-    clientName,
-    clientPhone,
-    clientAddress,
-    clientAddressData,
-    clientAddressName,
-    clientAddressNumber,
-    paymentType,
-    cashChange,
-    cardFlag,
-    orderStatusHistory: [
-      {
-        status: orderStatus,
-        date: new Date().toISOString()
+  if(user) {
+    const newOrder = await new orderModel({
+      _id: new mongoose.Types.ObjectId(),
+      createdAt: new Date().toISOString(),
+      orderStatus,
+      totalValue,
+      products,
+      clientName: user.firstName.concat(" ").concat(user.lastName),
+      clientPhone: user.phone,
+      clientAddress,
+      clientAddressData,
+      clientAddressName,
+      clientAddressNumber,
+      paymentType,
+      cashChange,
+      cardFlag,
+      orderStatusHistory: [
+        {
+          status: orderStatus,
+          date: new Date().toISOString()
+        }
+      ],
+      deliveryId: user.phone ? user.phone.slice(user.phone.length - 4) : null,
+      userId: id
+    })
+  
+    newOrder.save(function(err) {
+      if(err) {
+        res.status(400).json(err)
+        return
       }
-    ],
-    deliveryId: clientPhone ? clientPhone.slice(clientPhone.length - 4) : null
-  })
-
-  newOrder.save(function(err) {
-    if(err) {
-      res.status(400).json(err)
-      return
-    }
-    eventEmitter.emit('wss-broadcast', Object.assign({ type: 'order'}, newOrder))
-    res.status(200).json(newOrder)
-  })
+      eventEmitter.emit('wss-broadcast', Object.assign({ type: 'order'}, newOrder))
+      res.status(200).json(newOrder)
+    })
+  } else {
+    res.status(404).json({
+      message: "Usuário não encontrado"
+    })
+  }
 })
 
 router.put('/order', auth, async (req, res) => {
