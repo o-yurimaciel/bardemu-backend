@@ -30,12 +30,12 @@ router.post('/register', async (req, res) => {
 
     const user = userModel.create({
       _id,
-      firstName,
-      lastName,
-      fullName: firstName.concat(" ").concat(lastName),
-      email: email.toLowerCase(),
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      fullName: firstName.concat(" ").concat(lastName).trim(),
+      email: email.toLowerCase().trim(),
       password: encryptPassword,
-      phone
+      phone: phone.trim()
     })
 
     const token = jwt.sign(
@@ -45,7 +45,7 @@ router.post('/register', async (req, res) => {
       },
       process.env.TOKEN_KEY,
       { 
-        expiresIn: '1d'
+        expiresIn: '7d'
       }
     )
     
@@ -70,9 +70,9 @@ router.post('/login', async (req, res) => {
       })
     }
 
-    const user = await userModel.findOne({ email })
+    const user = await userModel.findOne({ email: email.trim() })
 
-    if(user && (await bcrypt.compare(password, user.password))) {
+    if(user && (await bcrypt.compare(password, user.password.trim()))) {
       const token = jwt.sign(
         { 
           user_id: user._id,
@@ -80,7 +80,7 @@ router.post('/login', async (req, res) => {
         },
         process.env.TOKEN_KEY,
         { 
-          expiresIn: '1d'
+          expiresIn: '7d'
         }
       )
       
@@ -200,16 +200,23 @@ router.put('/user/phone', auth, async (req, res) => {
     const { _id, phone } = req.body
   
     if(_id && phone) {
-      const result = await userModel.findOneAndUpdate({
-        _id
-      }, {
-        phone
-      }, {
-        new: true
-      })
-  
-      if(result) {
-        res.status(200).json(result)
+      const user = await userModel.findOne({ _id })
+
+      if(user) {
+        if(user.phone !== phone.trim()) {
+          const result = await userModel.findOneAndUpdate({
+            _id
+          }, {
+            phone: phone.trim()
+          }, {
+            new: true
+          })
+          res.status(200).json(result)
+        } else {
+          res.status(409).json({
+            message: "Celular já cadastrado"
+          })
+        }
       } else {
         res.status(400).json({
           message: "Usuário não encontrado"

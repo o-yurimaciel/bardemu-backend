@@ -37,7 +37,7 @@ router.post('/category', auth, (req, res) => {
   const category = {
     _id: new mongoose.Types.ObjectId(),
     createdAt: new Date().toISOString(),
-    name: req.body.name,
+    name: req.body.name.trim(),
     order: req.body.order ? req.body.order : 1
   }
 
@@ -61,7 +61,7 @@ router.delete('/category', auth, async (req, res) => {
   const result = await categoryModel.deleteOne({ _id: id })
 
   if(result) {
-    res.status(200).json({})
+    res.status(200).json(result)
   } else {
     res.status(500).json({})
   }
@@ -72,7 +72,7 @@ router.put('/category', auth, async (req, res) => {
   const id = new ObjectId(req.query._id)
 
   const category = {
-    name: req.body.name,
+    name: req.body.name.trim(),
     order: req.body.order,
     updatedAt: new Date().toISOString()
   }

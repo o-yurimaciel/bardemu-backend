@@ -43,8 +43,8 @@ router.post('/product', auth, (req, res) => {
   const product = {
     _id: new mongoose.Types.ObjectId(),
     createdAt: new Date().toISOString(),
-    name: req.body.name,
-    description: req.body.description ? req.body.description : '',
+    name: req.body.name.trim(),
+    description: req.body.description ? req.body.description.trim() : '',
     price: req.body.price ? req.body.price : 0,
     image: req.body.image ? req.body.image : null,
     category: req.body.category
