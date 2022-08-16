@@ -5,7 +5,9 @@ function onError(ws, err) {
 }
  
 function onMessage(ws) {
-  ws.send(`Received!`);
+  ws.send(JSON.stringify({
+    message: "Received!"
+  }));
 }
 
 function broadcast(jsonObject) {
