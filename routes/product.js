@@ -6,14 +6,24 @@ const mongoose = require('mongoose');
 const auth = require('../middleware/auth')
 
 router.get('/products', async (req, res) => {
-  const result = await productModel.find()
-
-  if(result) {
-    res.status(200).json(result)
+  if(req.headers["without-images"] === 'true') {
+    const products = await productModel.find().select(['-image'])
+    if(products) {
+      res.status(200).json(products)
+    } else {
+      res.status(404).json({
+        message: 'Nenhum produto foi encontrado'
+      })
+    }
   } else {
-    res.status(404).json({
-      message: 'Nenhum produto foi encontrado'
-    })
+    const products = await productModel.find()
+    if(products) {
+      res.status(200).json(products)
+    } else {
+      res.status(404).json({
+        message: 'Nenhum produto foi encontrado'
+      })
+    }
   }
 })
 
