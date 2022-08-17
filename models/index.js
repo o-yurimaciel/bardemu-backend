@@ -45,6 +45,7 @@ const orderModel = mongoose.model('order', new mongoose.Schema({
   paymentType: { type: String, required: true },
   cashChange: Number,
   cardFlag: String,
+  deliveryPrice: { type: Number },
   products: { type: Array, required: true },
   estimatedTime: { type: Number },
   deliveryId: { type: String },
@@ -81,7 +82,8 @@ const userModel = mongoose.model('user', new mongoose.Schema({
 
 const districtModel = mongoose.model('district', new mongoose.Schema({
   name: { type: String },
-  price: { type: Number }
+  price: { type: Number },
+  value: { type: String }
 }, {
   collection: 'districts'
 }))

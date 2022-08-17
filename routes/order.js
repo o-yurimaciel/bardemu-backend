@@ -65,7 +65,8 @@ router.post('/order', auth, async (req, res) => {
     clientAddress,
     clientAddressName,
     clientAddressData,
-    clientAddressNumber
+    clientAddressNumber,
+    deliveryPrice
   } = req.body
 
   const orderStatus = "PENDING"
@@ -87,6 +88,7 @@ router.post('/order', auth, async (req, res) => {
       clientAddressNumber,
       paymentType,
       cashChange,
+      deliveryPrice,
       cardFlag,
       orderStatusHistory: [
         {
