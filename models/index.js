@@ -62,7 +62,7 @@ const feedbackModel = mongoose.model('feedback', new mongoose.Schema({
   message: String,
   rating: { type: Number, required: true}
 }, {
-  collection: 'feedback'
+  collection: 'feedbacks'
 }))
 
 const userModel = mongoose.model('user', new mongoose.Schema({
@@ -75,6 +75,15 @@ const userModel = mongoose.model('user', new mongoose.Schema({
   password: { type: String },
   token: { type: String },
   address: { type: Object }
+}, {
+  collection: 'users'
+}))
+
+const districtModel = mongoose.model('district', new mongoose.Schema({
+  name: { type: String },
+  price: { type: Number }
+}, {
+  collection: 'districts'
 }))
 
 module.exports = {
@@ -83,5 +92,6 @@ module.exports = {
   loginModel,
   orderModel,
   feedbackModel,
-  userModel
+  userModel,
+  districtModel
 }

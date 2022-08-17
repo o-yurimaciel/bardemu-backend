@@ -4,8 +4,9 @@ const { feedbackModel, orderModel } = require('../models')
 const mongoose = require('mongoose')
 const ObjectId = require('mongoose').Types.ObjectId;
 const eventEmitter = require('../eventEmitter')
+const auth = require('../middleware/auth')
 
-router.post('/feedback', async (req, res) => {
+router.post('/feedback', auth, async (req, res) => {
   const { orderId, message, rating } = req.body
 
   const newFeedback = await new feedbackModel({
@@ -43,6 +44,23 @@ router.post('/feedback', async (req, res) => {
           message: "Pedido não encontrado"
         })
       }
+    })
+  }
+})
+
+router.get('/feedbacks', auth, async (req, res) => {
+  if(req.headers["role"] === 'master') {
+    const feedbacks = await feedbackModel.find()
+    if(feedbacks) {
+      res.status(200).json(feedbacks)
+    } else {
+      res.status(404).json({
+        message: 'Nenhuma avaliação foi encontrada'
+      })
+    }
+  } else {
+    res.status(403).json({
+      message: 'Não autorizado'
     })
   }
 })

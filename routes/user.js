@@ -99,6 +99,23 @@ router.post('/login', async (req, res) => {
   }
 })
 
+router.get('/users', auth, async (req, res) => {
+  if(req.headers["role"] === 'master') {
+    const users = await userModel.find()
+    if(users) {
+      res.status(200).json(users)
+    } else {
+      res.status(404).json({
+        message: 'Nenhum cliente foi encontrado'
+      })
+    }
+  } else {
+    res.status(403).json({
+      message: 'Não autorizado'
+    })
+  }
+})
+
 router.get('/user', auth, async (req, res) => {
   try {
     const { _id } = req.query

@@ -45,7 +45,9 @@ router.post('/category', auth, (req, res) => {
     let newCategory = new categoryModel(category)
   
     newCategory.save(function(err) {
-      console.log(err)
+      if(err) {
+        return res.status(500).json(err)
+      }
       res.status(200).json(category)
     })
   } else {
