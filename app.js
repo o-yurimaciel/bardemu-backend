@@ -11,6 +11,7 @@ const orderRouter = require('./routes/order')
 const feedbackRouter = require('./routes/feedback')
 const userRouter = require('./routes/user')
 const districtRouter = require('./routes/district')
+const configsRouter = require('./routes/configs')
 const appWs = require('./websocket')
 const eventEmitter = require('./eventEmitter')
 
@@ -28,6 +29,7 @@ app.use(orderRouter)
 app.use(feedbackRouter)
 app.use(userRouter)
 app.use(districtRouter)
+app.use(configsRouter)
 
 db.on('error', console.error.bind(console, 'MongoDB connection error'))
 

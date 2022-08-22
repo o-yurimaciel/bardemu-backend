@@ -100,19 +100,23 @@ router.post('/login', async (req, res) => {
 })
 
 router.get('/users', auth, async (req, res) => {
-  if(req.headers["role"] === 'master') {
-    const users = await userModel.find()
-    if(users) {
-      res.status(200).json(users)
+  try {
+    if(req.headers["role"] === 'master') {
+      const users = await userModel.find()
+      if(users) {
+        res.status(200).json(users)
+      } else {
+        res.status(404).json({
+          message: 'Nenhum cliente foi encontrado'
+        })
+      }
     } else {
-      res.status(404).json({
-        message: 'Nenhum cliente foi encontrado'
+      res.status(403).json({
+        message: 'Não autorizado'
       })
     }
-  } else {
-    res.status(403).json({
-      message: 'Não autorizado'
-    })
+  } catch (error) {
+    res.status(500).json(error)
   }
 })
 
@@ -234,6 +238,39 @@ router.put('/user/phone', auth, async (req, res) => {
             message: "Celular já cadastrado"
           })
         }
+      } else {
+        res.status(400).json({
+          message: "Usuário não encontrado"
+        })
+      }
+    } else {
+      res.status(400).json({
+        message: "Erro de validação"
+      })
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+})
+
+router.put('/user/password', auth, async (req, res) => {
+  try {
+    const { _id, password } = req.body
+  
+    if(_id && password) {
+      const user = await userModel.findOne({ _id })
+      const newPassword = await bcrypt.hash(password, 10)
+
+      if(user) {
+        const result = await userModel.findOneAndUpdate({
+          _id
+        }, {
+          password: newPassword
+        }, {
+          new: true
+        })
+        res.status(200).json(result) 
       } else {
         res.status(400).json({
           message: "Usuário não encontrado"

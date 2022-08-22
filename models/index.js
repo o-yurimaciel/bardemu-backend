@@ -88,6 +88,10 @@ const districtModel = mongoose.model('district', new mongoose.Schema({
   collection: 'districts'
 }))
 
+const configsModel = mongoose.model('configs', new mongoose.Schema({
+  opening: { type: Object }
+}))
+
 module.exports = {
   productModel,
   categoryModel,
@@ -95,5 +99,6 @@ module.exports = {
   orderModel,
   feedbackModel,
   userModel,
-  districtModel
+  districtModel,
+  configsModel
 }
