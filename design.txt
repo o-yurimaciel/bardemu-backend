@@ -1,0 +1,4 @@
+Recupere sua conta
+Insira o e-mail vinculado com a sua conta. Após esta etapa, você receberá um e-mail com as instruções para recuperação de sua conta.
+
+Pode demorar alguns instantes para chegar, verifique também no lixo eletrônico do seu e-mail.

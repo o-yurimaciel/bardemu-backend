@@ -6,7 +6,7 @@ router.get('/configs', async (req, res) => {
   try {
     const result = await configsModel.find()
     if(result) {
-      res.status(200).json(result)
+      res.status(200).json(result[0])
     } else {
       res.status(404).json({
         message: "Não encontrado"

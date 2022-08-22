@@ -74,8 +74,9 @@ const userModel = mongoose.model('user', new mongoose.Schema({
   email: { type: String, unique: true },
   phone: { type: String },
   password: { type: String },
+  passwordRecoveryCode: { type: String },
   token: { type: String },
-  address: { type: Object }
+  address: { type: Object },
 }, {
   collection: 'users'
 }))
