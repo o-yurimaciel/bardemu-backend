@@ -5,8 +5,9 @@ const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
 const eventEmitter = require('../eventEmitter')
 const auth = require('../middleware/auth')
+const verifyRole = require('../middleware/role')
 
-router.get('/orders', auth, async (req, res) => {
+router.get('/orders', auth, verifyRole, async (req, res) => {
   try {
     const result = await orderModel.find()
   
@@ -131,7 +132,7 @@ router.post('/order', auth, async (req, res) => {
   }
 })
 
-router.put('/order', auth, async (req, res) => {
+router.put('/order', auth, verifyRole, async (req, res) => {
   try {
     const { _id } = req.query
     const { orderStatus, estimatedTime } = req.body

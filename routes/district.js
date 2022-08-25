@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { districtModel } = require('../models')
 const ObjectId = require('mongoose').Types.ObjectId;
+const verifyRole = require('../middleware/role')
 const auth = require('../middleware/auth')
 
 router.get('/districts', auth, async (req, res) => {
@@ -74,7 +75,7 @@ router.get('/district/name', auth, async (req, res) => {
   }
 })
 
-router.post('/district', auth, async (req, res) => {
+router.post('/district', auth, verifyRole, async (req, res) => {
   try {
     const { name, price } = req.body
   
@@ -105,7 +106,7 @@ router.post('/district', auth, async (req, res) => {
   }
 })
 
-router.put('/district', auth, async (req, res) => {
+router.put('/district', auth, verifyRole, async (req, res) => {
   try {
     const { _id, name, price } = req.body
   
@@ -148,7 +149,7 @@ router.put('/district', auth, async (req, res) => {
   }
 })
 
-router.delete('/district', auth, async (req, res) => {
+router.delete('/district', auth, verifyRole, async (req, res) => {
   try {
     const { _id } = req.body
   

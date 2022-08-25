@@ -4,27 +4,29 @@ const { productModel, categoryModel } = require('../models')
 const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
 const auth = require('../middleware/auth')
+const verifyRole = require('../middleware/role')
 
 router.get('/products', async (req, res) => {
   try {
-    if(req.headers["without-images"] === 'true') {
-      const products = await productModel.find().select(['-image'])
-      if(products) {
-        res.status(200).json(products)
-      } else {
-        res.status(404).json({
-          message: 'Nenhum produto foi encontrado'
-        })
-      }
+    let products;
+
+    const withouImages = req.headers["without-images"] === 'true' ? true : false
+    const onlyActives = req.headers["only-actives"] === 'true' ? true : false
+
+    if(withouImages) {
+      products = await productModel.find().select(['-image'])
+    } else if(onlyActives) {
+      products = await productModel.find({ active: true })
     } else {
-      const products = await productModel.find()
-      if(products) {
-        res.status(200).json(products)
-      } else {
-        res.status(404).json({
-          message: 'Nenhum produto foi encontrado'
-        })
-      }
+      products = await productModel.find()
+    }
+
+    if(products) {
+      res.status(200).json(products)
+    } else {
+      res.status(404).json({
+        message: 'Nenhum produto foi encontrado'
+      })
     }
   } catch (error) {
     res.status(500).json(error)
@@ -57,7 +59,7 @@ router.get('/product', async (req, res) => {
   }
 })
 
-router.post('/product', auth, (req, res) => {
+router.post('/product', auth, verifyRole, (req, res) => {
   try { 
     const product = {
       _id: new mongoose.Types.ObjectId(),
@@ -66,7 +68,8 @@ router.post('/product', auth, (req, res) => {
       description: req.body.description ? req.body.description.trim() : '',
       price: req.body.price ? req.body.price : 0,
       image: req.body.image ? req.body.image : null,
-      category: req.body.category
+      category: req.body.category,
+      active: req.body.active ? req.body.active : false
     }
   
     if(product.name && product.price && product.category) {
@@ -98,7 +101,7 @@ router.post('/product', auth, (req, res) => {
   }
 })
 
-router.delete('/product', auth, async (req, res) => {
+router.delete('/product', auth, verifyRole, async (req, res) => {
   try {
     const id = new ObjectId(req.body._id)
   
@@ -121,7 +124,7 @@ router.delete('/product', auth, async (req, res) => {
   }
 })
 
-router.put('/product', auth, async (req, res) => {
+router.put('/product', auth, verifyRole, async (req, res) => {
   try {
     const id = new ObjectId(req.query._id)
   

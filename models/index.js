@@ -8,7 +8,8 @@ const productModel = mongoose.model('product', new mongoose.Schema({
   price: Number,
   description: String,
   image: String,
-  category: String
+  category: String,
+  active: Boolean
 }, {
   collection: 'products'
 }))
@@ -18,7 +19,8 @@ const categoryModel = mongoose.model('category', new mongoose.Schema({
   createdAt: Date,
   updatedAt: Date,
   name: String,
-  order: Number
+  order: Number,
+  active: Boolean
 }, {
   collection: 'categories'
 }))
@@ -35,7 +37,11 @@ const orderModel = mongoose.model('order', new mongoose.Schema({
   userId: mongoose.Types.ObjectId,
   createdAt: Date,
   updatedAt: Date,
-  orderStatus: { type: String, required: true },
+  orderStatus: { 
+    type: String, 
+    required: true,
+    enum: [ 'PENDING', 'CONFIRMED', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED' ]
+  },
   totalValue: { type: Number, required: true },
   clientName: { type: String, required: true },
   clientPhone: { type: String, required: true },
@@ -77,6 +83,12 @@ const userModel = mongoose.model('user', new mongoose.Schema({
   passwordRecoveryCode: { type: String },
   token: { type: String },
   address: { type: Object },
+  role: {
+    type: String,
+    enum: [
+      "MASTER"
+    ]
+  }
 }, {
   collection: 'users'
 }))
@@ -93,6 +105,21 @@ const configsModel = mongoose.model('configs', new mongoose.Schema({
   opening: { type: Object }
 }))
 
+const couponsModel = mongoose.model('coupons', new mongoose.Schema({
+  name: { type: String, unique: true },
+  percent: { type: Number, required: true },
+  field: {
+    type: String,
+    enum: [
+      'totalValue',
+      'deliveryPrice'
+    ]
+  },
+  active: Boolean
+}, {
+  collection: 'coupons'
+}))
+
 module.exports = {
   productModel,
   categoryModel,
@@ -101,5 +128,6 @@ module.exports = {
   feedbackModel,
   userModel,
   districtModel,
-  configsModel
+  configsModel,
+  couponsModel
 }

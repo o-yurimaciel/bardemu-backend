@@ -4,13 +4,21 @@ const { categoryModel } = require('../models')
 const mongoose = require('mongoose')
 const ObjectId = require('mongoose').Types.ObjectId;
 const auth = require('../middleware/auth')
+const verifyRole = require('../middleware/role')
 
 router.get('/categories', async (req, res) => {
   try {
-    const result = await categoryModel.find()
+    let categories
+    const onlyActives = req.headers["only-actives"] === 'true' ? true : false
+
+    if(onlyActives) {
+      categories = await categoryModel.find({ active: true })
+    } else {
+      categories = await categoryModel.find()
+    }
   
-    if(result) {
-      res.status(200).json(result)
+    if(categories) {
+      res.status(200).json(categories)
     } else {
       res.status(404).json({
         message: 'Not Found'
@@ -41,13 +49,14 @@ router.get('/category', async (req, res) => {
   }
 })
 
-router.post('/category', auth, (req, res) => {
+router.post('/category', auth, verifyRole, (req, res) => {
   try {
     const category = {
       _id: new mongoose.Types.ObjectId(),
       createdAt: new Date().toISOString(),
       name: req.body.name.trim(),
-      order: req.body.order ? req.body.order : 1
+      order: req.body.order ? req.body.order : 1,
+      active: req.body.active ? req.body.active : false
     }
   
     if(category.name && category.order) {
@@ -61,7 +70,7 @@ router.post('/category', auth, (req, res) => {
       })
     } else {
       res.status(400).json({
-        message: 'Validation failure'
+        message: 'Erro de validação'
       })
     }
   } catch (error) {
@@ -69,7 +78,7 @@ router.post('/category', auth, (req, res) => {
   }
 })
 
-router.delete('/category', auth, async (req, res) => {
+router.delete('/category', auth, verifyRole, async (req, res) => {
   try {
     const id = new ObjectId(req.body._id)
     const result = await categoryModel.deleteOne({ _id: id })
@@ -84,15 +93,15 @@ router.delete('/category', auth, async (req, res) => {
   }
 })
 
-router.put('/category', auth, async (req, res) => {
+router.put('/category', auth, verifyRole, async (req, res) => {
   try {
-    x
     const id = new ObjectId(req.query._id)
   
     const category = {
       name: req.body.name.trim(),
       order: req.body.order,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
+      active: req.body.active ? req.body.active : false
     }
   
     if(category.name && category.order) {
@@ -107,10 +116,11 @@ router.put('/category', auth, async (req, res) => {
       }
     } else {
       res.status(400).json({
-        message: 'Validation failure'
+        message: 'Erro de validação'
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })

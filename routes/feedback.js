@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 const ObjectId = require('mongoose').Types.ObjectId;
 const eventEmitter = require('../eventEmitter')
 const auth = require('../middleware/auth')
+const verifyRole = require('../middleware/role')
 
 router.post('/feedback', auth, async (req, res) => {
   try {
@@ -52,20 +53,15 @@ router.post('/feedback', auth, async (req, res) => {
   }
 })
 
-router.get('/feedbacks', auth, async (req, res) => {
+router.get('/feedbacks', auth, verifyRole, async (req, res) => {
   try {
-    if(req.headers["role"] === 'master') {
-      const feedbacks = await feedbackModel.find()
-      if(feedbacks) {
-        res.status(200).json(feedbacks)
-      } else {
-        res.status(404).json({
-          message: 'Nenhuma avaliação foi encontrada'
-        })
-      }
+    const feedbacks = await feedbackModel.find()
+    
+    if(feedbacks) {
+      res.status(200).json(feedbacks)
     } else {
-      res.status(403).json({
-        message: 'Não autorizado'
+      res.status(404).json({
+        message: 'Nenhuma avaliação foi encontrada'
       })
     }
   } catch (error) {

@@ -8,6 +8,7 @@ const auth = require('../middleware/auth');
 const sendEmail = require('../utils/email');
 const randomString = require('../utils/randomString');
 const ObjectId = require('mongoose').Types.ObjectId;
+const verifyRole = require('../middleware/role')
 
 router.post('/register', async (req, res) => {
   try {
@@ -90,6 +91,7 @@ router.post('/login', async (req, res) => {
         }
       )
       
+      user.passwordRecoveryCode = undefined
       user.password = undefined
       user.token = token
   
@@ -105,20 +107,14 @@ router.post('/login', async (req, res) => {
   }
 })
 
-router.get('/users', auth, async (req, res) => {
+router.get('/users', auth, verifyRole, async (req, res) => {
   try {
-    if(req.headers["role"] === 'master') {
-      const users = await userModel.find()
-      if(users) {
-        res.status(200).json(users)
-      } else {
-        res.status(404).json({
-          message: 'Nenhum cliente foi encontrado'
-        })
-      }
+    const users = await userModel.find()
+    if(users) {
+      res.status(200).json(users)
     } else {
-      res.status(403).json({
-        message: 'Não autorizado'
+      res.status(404).json({
+        message: 'Nenhum cliente foi encontrado'
       })
     }
   } catch (error) {
@@ -259,39 +255,6 @@ router.put('/user/phone', auth, async (req, res) => {
     res.status(500).json(error)
   }
 })
-
-// router.put('/user/password', auth, async (req, res) => {
-//   try {
-//     const { _id, password } = req.body
-  
-//     if(_id && password) {
-//       const user = await userModel.findOne({ _id })
-//       const newPassword = await bcrypt.hash(password, 10)
-
-//       if(user) {
-//         const result = await userModel.findOneAndUpdate({
-//           _id
-//         }, {
-//           password: newPassword
-//         }, {
-//           new: true
-//         })
-//         res.status(200).json(result) 
-//       } else {
-//         res.status(400).json({
-//           message: "Usuário não encontrado"
-//         })
-//       }
-//     } else {
-//       res.status(400).json({
-//         message: "Erro de validação"
-//       })
-//     }
-//   } catch (error) {
-//     console.log(error)
-//     res.status(500).json(error)
-//   }
-// })
 
 router.post('/user/password/code', async (req, res) => {
   try {
