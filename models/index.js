@@ -65,9 +65,12 @@ const orderModel = mongoose.model('order', new mongoose.Schema({
 const feedbackModel = mongoose.model('feedback', new mongoose.Schema({
   _id: mongoose.Types.ObjectId,
   orderId: { type: mongoose.Types.ObjectId, required: true },
+  userId: { type: mongoose.Types.ObjectId, required: true },
+  name: { type: String },
   createdAt: Date,
   message: String,
-  rating: { type: Number, required: true}
+  rating: { type: Number, required: true },
+  favorite: { type: Boolean, default: false }
 }, {
   collection: 'feedbacks'
 }))
@@ -111,8 +114,9 @@ const couponsModel = mongoose.model('coupons', new mongoose.Schema({
   field: {
     type: String,
     enum: [
-      'totalValue',
-      'deliveryPrice'
+      'orderValue',
+      'deliveryPrice',
+      'totalValue'
     ]
   },
   active: Boolean

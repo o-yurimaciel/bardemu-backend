@@ -63,7 +63,7 @@ router.post('/register', async (req, res) => {
     })
   } catch (error) {
     console.log(error)
-    return res.status(500).json(error)
+    res.status(500).json(error)
   }
 })
 
@@ -103,6 +103,7 @@ router.post('/login', async (req, res) => {
     })
   } catch (error) {
     console.log(error)
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -118,6 +119,7 @@ router.get('/users', auth, verifyRole, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -143,6 +145,7 @@ router.get('/user', auth, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     console.log(error)
     res.status(500).json(error)
   }
@@ -179,6 +182,7 @@ router.post('/user/address', auth, async (req, res) => {
     }
   } catch (error) {
     console.log(error)
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -213,6 +217,7 @@ router.delete('/user/address', auth, async (req, res) => {
       }
     }
   } catch (error) {
+    console.log(error)
     console.log(error)
     res.status(500).json(error)
   }
@@ -251,6 +256,7 @@ router.put('/user/phone', auth, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     console.log(error)
     res.status(500).json(error)
   }
@@ -297,7 +303,8 @@ router.put('/user/password/code', async (req, res) => {
       email,
       passwordRecoveryCode: code
     }, {
-      password: newPassword
+      password: newPassword,
+      passwordRecoveryCode: null
     })
   
     if(user) {
@@ -311,6 +318,7 @@ router.put('/user/password/code', async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })

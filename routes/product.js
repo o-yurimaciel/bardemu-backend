@@ -29,6 +29,7 @@ router.get('/products', async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -55,6 +56,7 @@ router.get('/product', async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -97,6 +99,7 @@ router.post('/product', auth, verifyRole, (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -120,6 +123,7 @@ router.delete('/product', auth, verifyRole, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -148,6 +152,7 @@ router.put('/product', auth, verifyRole, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })

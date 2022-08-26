@@ -19,6 +19,7 @@ router.get('/orders', auth, verifyRole, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -37,24 +38,39 @@ router.get('/user/orders', auth, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
 
 router.get('/order', auth, async (req, res) => {
   try {
-    const { _id } = req.query
+    const { _id, userId } = req.query
   
-    if(_id) {
-      const result = await orderModel.findOne({
-        _id: new ObjectId(_id)
-      })
-    
-      if(result) {
-        res.status(200).json(result)
+    if(_id && userId) {
+      const user = await userModel.findOne({ _id: new ObjectId(userId) })
+
+      if(user) {
+        const order = await orderModel.findOne({
+          _id: new ObjectId(_id)
+        })
+
+        if(user.role !== "MASTER" && !user._id.equals(order.userId)) {
+          return res.status(403).json({
+            message: 'Operação não permitida'
+          })
+        }
+      
+        if(order) {
+          res.status(200).json(order)
+        } else {
+          res.status(404).json({
+            message: 'Pedido não encontrado'
+          })
+        }
       } else {
         res.status(404).json({
-          message: 'Pedido não encontrado'
+          message: 'Usuário não encontrado'
         })
       }
     } else {
@@ -63,6 +79,7 @@ router.get('/order', auth, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -128,6 +145,7 @@ router.post('/order', auth, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -217,6 +235,7 @@ router.put('/order', auth, verifyRole, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })

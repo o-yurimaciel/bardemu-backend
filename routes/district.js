@@ -16,6 +16,7 @@ router.get('/districts', auth, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -40,6 +41,7 @@ router.get('/district', auth, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -71,6 +73,7 @@ router.get('/district/name', auth, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -102,6 +105,7 @@ router.post('/district', auth, verifyRole, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -145,6 +149,7 @@ router.put('/district', auth, verifyRole, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -169,6 +174,7 @@ router.delete('/district', auth, verifyRole, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })

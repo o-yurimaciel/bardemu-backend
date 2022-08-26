@@ -25,6 +25,7 @@ router.get('/coupon', auth, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -62,6 +63,7 @@ router.put('/coupon', auth, verifyRole, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -98,6 +100,7 @@ router.post('/coupon', auth, verifyRole, async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -113,6 +116,7 @@ router.delete('/coupon', auth, verifyRole, async (req, res) => {
       res.status(500).json({})
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })

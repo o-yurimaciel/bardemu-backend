@@ -25,6 +25,7 @@ router.get('/categories', async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -45,6 +46,7 @@ router.get('/category', async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -74,6 +76,7 @@ router.post('/category', auth, verifyRole, (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
@@ -89,6 +92,7 @@ router.delete('/category', auth, verifyRole, async (req, res) => {
       res.status(500).json({})
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 })
