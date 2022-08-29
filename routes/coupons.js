@@ -7,10 +7,20 @@ const ObjectId = require('mongoose').Types.ObjectId;
 
 router.get('/coupon', auth, async (req, res) => {
   try {
-    const { name } = req.query
+    const { name, _id } = req.query
   
-    if(name) {
-      const coupon = await couponsModel.findOne({ name: name.toLocaleUpperCase().trim() })
+    if(name || _id) {
+      let coupon;
+
+      if(name) {
+        coupon = await couponsModel.findOne({ 
+          name: name.toLocaleUpperCase().trim()
+        })
+      } else {
+        coupon = await couponsModel.findOne({ 
+          _id: new ObjectId(_id)
+        })
+      }
   
       if(coupon) {
         res.status(200).json(coupon)
@@ -115,6 +125,16 @@ router.delete('/coupon', auth, verifyRole, async (req, res) => {
     } else {
       res.status(500).json({})
     }
+  } catch (error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+})
+
+router.get('/coupons', auth, verifyRole, async (req, res) => {
+  try {
+    const coupons = await couponsModel.find()
+    res.status(200).json(coupons)
   } catch (error) {
     console.log(error)
     res.status(500).json(error)

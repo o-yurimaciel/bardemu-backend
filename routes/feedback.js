@@ -88,6 +88,31 @@ router.get('/feedbacks', auth, verifyRole, async (req, res) => {
   }
 })
 
+router.get('/feedbacks/favorites', async (req, res) => {
+  try {
+    const feedbacks = await feedbackModel.find({
+      favorite: true
+    })
+    
+    if(feedbacks) {
+      feedbacks.filter((feedback) => {
+        feedback._id = undefined
+        feedback.userId = undefined
+        feedback.orderId = undefined
+      })
+
+      res.status(200).json(feedbacks)
+    } else {
+      res.status(404).json({
+        message: 'Nenhuma avaliação foi encontrada'
+      })
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+})
+
 router.put('/feedback/favorite', auth, verifyRole, async (req, res) => {
   try {
     const { _id, favorite } = req.body
@@ -97,7 +122,7 @@ router.put('/feedback/favorite', auth, verifyRole, async (req, res) => {
   
       if(feedback) {
         const result = await feedbackModel.updateOne({
-          _id: new ObjectId(id)
+          _id: new ObjectId(_id)
         }, {
           favorite
         }, {

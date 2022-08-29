@@ -87,7 +87,6 @@ router.get('/order', auth, async (req, res) => {
 router.post('/order', auth, async (req, res) => {
   try { 
     const { 
-      totalValue,
       paymentType, 
       cashChange, 
       cardFlag,
@@ -97,12 +96,16 @@ router.post('/order', auth, async (req, res) => {
       clientAddressName,
       clientAddressData,
       clientAddressNumber,
-      deliveryPrice
+      deliveryPrice,
+      orderValue,
+      coupon,
+      discountValue
     } = req.body
   
     const orderStatus = "PENDING"
     const id = new ObjectId(userId) 
     const user = await userModel.findOne({ _id: id })
+    const totalValue = parseFloat(orderValue) + parseFloat(deliveryPrice) - parseFloat(discountValue)
   
     if(user) {
       const newOrder = await new orderModel({
@@ -128,7 +131,10 @@ router.post('/order', auth, async (req, res) => {
           }
         ],
         deliveryId: user.phone ? user.phone.slice(user.phone.length - 4) : null,
-        userId: id
+        userId: id,
+        orderValue,
+        coupon,
+        discountValue
       })
     
       newOrder.save(function(err) {
@@ -190,7 +196,7 @@ router.put('/order', auth, verifyRole, async (req, res) => {
   
     switch(orderStatus) {
       case "CONFIRMED":
-        if(estimatedTime) {
+        if(estimatedTime || estimatedTime <= 0) {
           message = `Olá, ${order.clientName}.\nO seu pedido foi confirmado e já está sendo preparado.\nA previsão de entrega é de ${estimatedTime} minutos.\n\nVocê será avisado quando o pedido sair para a entrega.\nBarDeMu agradece a preferência. :)`
         } else {
           res.status(400).json({
@@ -200,7 +206,7 @@ router.put('/order', auth, verifyRole, async (req, res) => {
         }
         break
       case "OUT_FOR_DELIVERY":
-        message = `O seu pedido acabou de sair para entrega.\nPor favor, informe o código "${order.deliveryId}" ao motoboy para receber.`
+        message = `O seu pedido acabou de sair para entrega.\nPor favor, informe o código "${order.deliveryId}" ao entregador para receber.`
         break
       case "DELIVERED":
         message = `O seu pedido foi entregue.\nAvalie a sua experiência aqui -> https://bardemu.com.br/pedido/${order._id}`

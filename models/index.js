@@ -43,6 +43,8 @@ const orderModel = mongoose.model('order', new mongoose.Schema({
     enum: [ 'PENDING', 'CONFIRMED', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED' ]
   },
   totalValue: { type: Number, required: true },
+  orderValue: { type: Number, required: true },
+  discountValue: { type: Number },
   clientName: { type: String, required: true },
   clientPhone: { type: String, required: true },
   clientAddress: { type: String, required: true },
@@ -57,7 +59,8 @@ const orderModel = mongoose.model('order', new mongoose.Schema({
   deliveryId: { type: String },
   orderStatusHistory: Array,
   message: { type: String },
-  feedback: { type: Object }
+  feedback: { type: Object },
+  coupon: { type: String }
 }, {
   collection: 'order'
 }))
