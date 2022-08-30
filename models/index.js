@@ -34,6 +34,7 @@ const loginModel = mongoose.model('login', new mongoose.Schema({
 
 const orderModel = mongoose.model('order', new mongoose.Schema({
   _id: mongoose.Types.ObjectId,
+  orderNumber: { type: Number, unique: true, required: true },
   userId: mongoose.Types.ObjectId,
   createdAt: Date,
   updatedAt: Date,

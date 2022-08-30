@@ -12,7 +12,7 @@ router.post('/feedback', auth, async (req, res) => {
   try {
     const { orderId, message, rating, userId } = req.body
 
-    const order = orderModel.findOne({ _id: new ObjectId(orderId) })
+    const order = await orderModel.findOne({ _id: new ObjectId(orderId) })
 
     if(!order.userId.equals(new ObjectId(userId))) {
       return res.status(403).json({

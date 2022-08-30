@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const eventEmitter = require('../eventEmitter')
 const auth = require('../middleware/auth')
 const verifyRole = require('../middleware/role')
+const sendEmail = require('../utils/email');
 
 router.get('/orders', auth, verifyRole, async (req, res) => {
   try {
@@ -101,6 +102,9 @@ router.post('/order', auth, async (req, res) => {
       coupon,
       discountValue
     } = req.body
+
+    let orderNumber = await orderModel.count()
+    orderNumber = orderNumber + 1
   
     const orderStatus = "PENDING"
     const id = new ObjectId(userId) 
@@ -110,11 +114,12 @@ router.post('/order', auth, async (req, res) => {
     if(user) {
       const newOrder = await new orderModel({
         _id: new mongoose.Types.ObjectId(),
+        orderNumber: orderNumber,
         createdAt: new Date().toISOString(),
         orderStatus,
         totalValue,
         products,
-        clientName: user.firstName.concat(" ").concat(user.lastName),
+        clientName: user.fullName,
         clientPhone: user.phone,
         clientAddress,
         clientAddressData,
@@ -143,6 +148,12 @@ router.post('/order', auth, async (req, res) => {
           return
         }
         eventEmitter.emit('wss-broadcast', Object.assign({ type: 'order'}, newOrder))
+        sendEmail({
+          to: user.email,
+          subject: `BarDeMu Lanches - Pedido #${orderNumber} realizado`,
+          text: `
+          Olá, ${user.firstName}.\nO seu pedido foi realizado e está aguardando confirmação.\nVocê será atualizado via WhatsApp sobre o andamento do pedido e também pode acompanhar pelo site em www.bardemu.com.br/meus-pedidos\nFique à vontade para nos chamar para quaisquer dúvidas ou alterações do pedido.\nBarDeMu agradece a preferência. :)`
+        })
         res.status(200).json(newOrder)
       })
     } else {
@@ -162,9 +173,13 @@ router.put('/order', auth, verifyRole, async (req, res) => {
     const { orderStatus, estimatedTime } = req.body
   
     const order = await orderModel.findOne({
-      _id: _id
+      _id: new ObjectId(_id)
     })
-  
+
+    const user = await userModel.findOne({
+      _id: new ObjectId(order.userId)
+    })
+
     const validStatusOptions = [
       "CONFIRMED",
       "OUT_FOR_DELIVERY",
@@ -193,11 +208,13 @@ router.put('/order', auth, verifyRole, async (req, res) => {
     }
   
     let message = null
+    let subject = null
   
     switch(orderStatus) {
       case "CONFIRMED":
         if(estimatedTime || estimatedTime <= 0) {
-          message = `Olá, ${order.clientName}.\nO seu pedido foi confirmado e já está sendo preparado.\nA previsão de entrega é de ${estimatedTime} minutos.\n\nVocê será avisado quando o pedido sair para a entrega.\nBarDeMu agradece a preferência. :)`
+          subject = `BarDeMu Lanches - Pedido #${order.orderNumber} confirmado`
+          message = `Olá, ${order.clientName}.\nO seu pedido foi confirmado e já está sendo preparado.\nA previsão de entrega é de ${estimatedTime} minutos.\n\nVocê será avisado quando o pedido sair para a entrega.`
         } else {
           res.status(400).json({
             message: 'Tempo estimado de entrega inválido'
@@ -206,12 +223,15 @@ router.put('/order', auth, verifyRole, async (req, res) => {
         }
         break
       case "OUT_FOR_DELIVERY":
+        subject = `BarDeMu Lanches - Pedido #${order.orderNumber} saiu para entrega`
         message = `O seu pedido acabou de sair para entrega.\nPor favor, informe o código "${order.deliveryId}" ao entregador para receber.`
         break
       case "DELIVERED":
-        message = `O seu pedido foi entregue.\nAvalie a sua experiência aqui -> https://bardemu.com.br/pedido/${order._id}`
+        subject = `BarDeMu Lanches - Pedido #${order.orderNumber} entregue`
+        message = `O seu pedido foi entregue.\nAvalie a sua experiência aqui -> https://bardemu.com.br/pedido/${order._id}\nMuito obrigado e volte sempre!`
         break
       case "CANCELLED":
+        subject = `BarDeMu Lanches - Pedido #${order.orderNumber} cancelado`
         message = `Olá, ${order.clientName}! O seu pedido foi cancelado.`
         break
     }
@@ -234,6 +254,13 @@ router.put('/order', auth, verifyRole, async (req, res) => {
     })
   
     if(result) {
+      if(user.email) {
+        sendEmail({
+          to: user.email,
+          subject: subject,
+          text: message
+        })
+      }
       res.status(200).json(result)
     } else {
       res.status(404).json({

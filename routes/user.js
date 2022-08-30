@@ -54,7 +54,7 @@ router.post('/register', async (req, res) => {
     sendEmail({
       to: email,
       subject: 'BarDeMu Lanches - Seja bem vindo(a)!',
-      text: `Olá, ${firstName}!\nFicamos muito felizes pelo seu cadastro no nosso site.\nComece cadastrando seus endereços na sessão de "Minha Conta" e aproveite para pedir o melhor lanche da Zona Sul de Porto Alegre.\n\nNos siga no instagram -> www.instagram.com/bardemulanches`
+      text: `Olá, ${firstName}!\nFicamos muito felizes pelo seu cadastro no nosso site.\nCadastre seus endereços em www.bardemu.com.br/minha-conta/enderecos e aproveite para pedir o melhor lanche da Zona Sul de Porto Alegre.\nEstamos abertos de terça à domingo (19:30h - 0:30h).\n\nNos siga no instagram -> www.instagram.com/bardemulanches`
     })
     res.status(201).json({
       _id,
